@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jeu de la Complicité - Ultimate</title>
+    <title>Jeu de la Complicité</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -40,6 +40,7 @@
             box-sizing: border-box;
         }
 
+        /* --- TYPOGRAPHY --- */
         h1 {
             text-align: center;
             font-weight: 300;
@@ -47,8 +48,28 @@
             letter-spacing: 2px;
             color: var(--neon-blue);
             text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0;
         }
+
+        .tagline {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        /* --- CREDITS --- */
+        .credits {
+            margin-top: auto; /* Pousse vers le bas */
+            text-align: center;
+            font-size: 0.75rem;
+            color: #444;
+            padding-bottom: 10px;
+            line-height: 1.4;
+        }
+        .credits span { color: #666; font-weight: bold; }
 
         /* --- SETUP SCREEN --- */
         .config-box {
@@ -58,22 +79,21 @@
             border: 1px solid #333;
             display: flex;
             flex-direction: column;
-            gap: 10px; /* Espace uniforme entre tous les éléments */
+            gap: 10px;
         }
 
-        /* Lignes de configuration uniformes */
         .config-row {
             width: 100%;
             display: flex;
             gap: 10px;
             align-items: center;
-            box-sizing: border-box; /* Important pour l'alignement */
+            box-sizing: border-box;
         }
 
         label {
             font-size: 0.85rem;
             color: #888;
-            margin-bottom: -5px; /* Rapproche le label de l'input */
+            margin-bottom: -5px;
             margin-left: 2px;
         }
 
@@ -86,7 +106,7 @@
             color: white;
             font-size: 1rem;
             text-align: center;
-            box-sizing: border-box; /* Assure que padding ne casse pas la largeur */
+            box-sizing: border-box;
         }
         
         input:focus { outline: none; border-color: var(--neon-blue); }
@@ -178,15 +198,9 @@
         .btn-neutral { background-color: #444; color: #ccc; }
         
         .btn-icon { 
-            width: 50px; /* Largeur fixe pour le bouton delete */
-            flex-shrink: 0;
-            padding: 0; 
-            height: 45px; /* Hauteur de l'input */
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 1.2rem; 
-            margin-bottom: 0;
+            width: 50px; flex-shrink: 0; padding: 0; height: 45px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.2rem; margin-bottom: 0;
         }
 
         /* --- MODALES --- */
@@ -207,6 +221,7 @@
 
     <div id="screen-setup" class="container">
         <h1>Complicité</h1>
+        <p class="tagline">L'art de se comprendre à demi-mot</p>
         
         <div class="config-box">
             <div style="display:flex; flex-direction:column; gap:5px; margin-bottom:10px;">
@@ -225,7 +240,13 @@
             <button class="btn btn-neutral" onclick="addTeam()" style="margin-top:10px; border:1px dashed #666;">+ Ajouter Équipe</button>
         </div>
 
-        <button class="btn btn-primary" onclick="startGame()">Lancer la partie</button>
+        <button class="btn btn-primary" onclick="startGame()" style="margin-top:15px;">Lancer la partie</button>
+
+        <div class="credits">
+            Fait par <span>@francois.grcia</span><br>
+            et <span>@xav_le_toums</span><br>
+            <span style="font-weight:normal; font-style:italic; font-size:0.7rem; color:#333;">(anciennement @xavier_le_vrai)</span>
+        </div>
     </div>
 
     <div id="screen-game" class="container hidden">
@@ -265,43 +286,36 @@
     <script>
         // --- DONNEES MASSIVES ---
         const baseWords = [
-            // OBJETS DU QUOTIDIEN
+            // OBJETS
             "Brosse à dents", "Micro-ondes", "Chaussette", "Télécommande", "Canapé", "Oreiller", "PQ", "Chargeur",
             "Cuit-vapeur", "Glaçon", "Cadenas", "Trombone", "Ventilateur", "Presse-ail", "Bouilloire", "Miroir",
             "Clé USB", "Parapluie", "Valise", "Tong", "Casquette", "Sèche-cheveux", "Lave-vaisselle", "Poubelle",
-            
             // LIEUX
             "Camping", "Plage", "Prison", "Hôpital", "Ascenseur", "Toilettes", "Cinéma", "Ikea", "Aéroport",
             "Gare", "Bibliothèque", "Piscine municipale", "Sauna", "Grenier", "Cave", "Boîte de nuit", "Kebab",
             "Musée", "Salle de sport", "Bureau de tabac", "Pharmacie", "Boulangerie", "Montagne", "Autoroute",
-            
-            // NOURRITURE & BOISSON
+            // NOURRITURE
             "Pizza", "Raclette", "Sushi", "Ketchup", "Mayonnaise", "Cornichon", "Tequila", "Champagne", "Eau du robinet",
             "Café froid", "Croissant", "Baguette", "Camembert", "Chocolat", "Barbecue", "Lasagnes", "Chips", "Huître",
             "Kebab", "Burger", "Gluten", "Végan", "Brocoli", "Épinards", "Mojito", "Bière", "Glaçon",
-            
-            // SITUATIONS / CONCEPTS
+            // CONCEPTS
             "Divorce", "Mariage", "Enterrement", "Lendemain de cuite", "Rendez-vous Tinder", "Grève", "Bouchons",
             "Retard", "Chômage", "Baccalauréat", "Permis de conduire", "Déménagement", "Insomnie", "Régime",
             "Gueule de bois", "Coup de soleil", "Piqûre de moustique", "Hoquet", "Éternuement", "Ronflement",
             "Puberté", "Retraite", "Sieste", "Cauchemar", "Fou rire", "Secret", "Mensonge", "Honte",
-            
-            // PERSONNAGES / POP CULTURE (Génériques)
+            // POP CULTURE
             "Père Noël", "Harry Potter", "Batman", "Zidane", "Macron", "La Reine d'Angleterre", "Jésus", "Mickey",
             "Pikachu", "Dracula", "James Bond", "Shrek", "Titanic", "Star Wars", "Netflix", "Instagram", "TikTok",
             "Wi-Fi", "Smartphone", "Bluetooth", "Batterie faible", "Spoiler", "Influenceur", "Selfie",
-            
-            // ANIMAUX & NATURE
+            // NATURE / ANIMAUX
             "Pigeon", "Moustique", "Licorne", "Dinosaure", "Requin", "Chat", "Chien", "Lama", "Panda", "Cafard",
             "Araignée", "Méduse", "Vache", "Cochon", "Poule", "Serpent", "Orage", "Neige", "Canicule", "Arc-en-ciel",
-            
-            // RANDOM / DRÔLE
+            // RANDOM
             "Belle-mère", "Ex-copain", "Patron", "Voisin", "Colocataire", "Facteur", "Dentiste", "Gynécologue",
             "Plombier", "Politicien", "Vampire", "Fantôme", "Zombie", "Extraterrestre", "Robot", "Clown",
             "Soutien-gorge", "Caleçon", "String", "Pyjama", "Déodorant", "Pieds qui puent", "Cheveux gras",
             "Bouton d'acné", "Lunettes", "Appareil dentaire", "Béquilles", "Plâtre", "Vaccin", "Test PCR",
-            
-            // VERBES / ACTIONS
+            // ACTIONS
             "Vomir", "Danser", "Pleurer", "Crier", "Chuchoter", "Courir", "Dormir", "Manger", "Draguer",
             "Tromper", "Voler", "Mentir", "Se perdre", "Tomber", "Glisser", "Payer", "Nettoyer", "Cuisiner"
         ];
@@ -323,7 +337,6 @@
                 const row = document.createElement('div');
                 row.className = 'config-row';
                 
-                // Input Nom
                 const input = document.createElement('input');
                 input.value = team.name;
                 input.onchange = (e) => teams[index].name = e.target.value;
@@ -331,7 +344,6 @@
 
                 row.appendChild(input);
 
-                // Bouton Suppr (si > 2 équipes)
                 if (teams.length > 2) {
                     const btnDel = document.createElement('button');
                     btnDel.innerText = "✕";
@@ -384,13 +396,10 @@
 
         function updateUI() {
             const activeTeam = teams[currentTeamIndex];
-            
-            // 1. Scoreboard Logic
             const sb = document.getElementById('scoreboard');
             sb.innerHTML = "";
             
             if (teams.length === 2) {
-                // Mode Duel (Style V1)
                 const t1 = teams[0];
                 const t2 = teams[1];
                 sb.innerHTML = `
@@ -405,7 +414,6 @@
                     </div>
                 `;
             } else {
-                // Mode Multi (Grid)
                 teams.forEach((t, idx) => {
                     const div = document.createElement('div');
                     div.className = `team-score-box ${idx === currentTeamIndex ? 'team-active' : ''}`;
@@ -414,7 +422,6 @@
                 });
             }
 
-            // 2. Textes
             document.getElementById('turn-indicator').innerHTML = `Au tour de <b style="color:var(--neon-green)">${activeTeam.name}</b>`;
             document.getElementById('btn-win').innerText = `✅ Trouvé par ${activeTeam.name} (+1)`;
         }
@@ -471,7 +478,6 @@
 
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // --- EVENTS ---
         const holdBtn = document.getElementById('hold-btn');
         const wordDisplay = document.getElementById('word-display');
         const holdInst = document.getElementById('hold-instruction');
@@ -486,7 +492,6 @@
         holdBtn.addEventListener('touchend', hide);
 
         renderSetup();
-
     </script>
 </body>
 </html>
