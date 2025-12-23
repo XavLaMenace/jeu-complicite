@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Confiance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="top-nav"><a href="index.html" class="btn-home">🏠</a></div>
+
+        <div id="conf-setup">
+            <h1 style="color:var(--neon-purple); text-shadow: 0 0 10px rgba(213, 0, 249, 0.4);">Confiance</h1>
+            <div class="config-box">
+                <label>Joueurs (Min. 2)</label>
+                <div id="conf-players-container" style="display:flex; flex-direction:column; gap:10px;"></div>
+                <button class="btn btn-neutral" onclick="addConfPlayer()" style="margin-top:10px; border:1px dashed #555;">+ Ajouter Joueur</button>
+            </div>
+            <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+                <button class="btn btn-purple" onclick="runConfiance('starter')">🎲 Qui commence ?</button>
+                <button class="btn btn-neutral" onclick="runConfiance('order')">🔢 Ordre de passage</button>
+            </div>
+        </div>
+
+        <div id="conf-result" class="hidden" style="height:100%; display:flex; flex-direction:column;">
+            <h1 style="color:var(--neon-purple);">Résultat</h1>
+            <div class="confiance-result" id="conf-display-area"></div>
+            <button class="btn btn-neutral" onclick="resetConfiance()">Retour</button>
+        </div>
+    </div>
+
+    <script>
+        let confPlayers = ["Joueur 1", "Joueur 2"];
+        function renderConfSetup() {
+            const container = document.getElementById('conf-players-container');
+            container.innerHTML = "";
+            confPlayers.forEach((player, index) => {
+                const row = document.createElement('div');
+                row.className = 'config-row';
+                const input = document.createElement('input');
+                input.value = player;
+                input.onchange = (e) => confPlayers[index] = e.target.value;
+                input.placeholder = "Nom du Joueur";
+                row.appendChild(input);
+                if (confPlayers.length > 2) {
+                    const btnDel = document.createElement('button'); btnDel.innerText = "✕";
+                    btnDel.className = "btn btn-danger btn-icon"; btnDel.onclick = () => removeConfPlayer(index);
+                    row.appendChild(btnDel);
+                }
+                container.appendChild(row);
+            });
+        }
+        function addConfPlayer() { confPlayers.push(`Joueur ${confPlayers.length + 1}`); renderConfSetup(); }
+        function removeConfPlayer(index) { if (confPlayers.length <= 2) return; confPlayers.splice(index, 1); renderConfSetup(); }
+        function runConfiance(mode) {
+            const validPlayers = confPlayers.filter(p => p.trim() !== "");
+            if (validPlayers.length < 2) { alert("Min 2 joueurs !"); return; }
+            document.getElementById('conf-setup').classList.add('hidden');
+            document.getElementById('conf-result').classList.remove('hidden');
+            const display = document.getElementById('conf-display-area');
+            display.innerHTML = "";
+            if (mode === 'starter') {
+                const winner = validPlayers[Math.floor(Math.random() * validPlayers.length)];
+                display.innerHTML = `<p style="color:#888;">C'est à...</p><div class="big-result">${winner}</div><p style="color:#888;">de commencer !</p>`;
+            } else if (mode === 'order') {
+                let shuffled = [...validPlayers].sort(() => 0.5 - Math.random());
+                const ul = document.createElement('ul'); ul.className = 'order-list';
+                shuffled.forEach((p, i) => { const li = document.createElement('li'); li.className = 'order-item'; li.style.animationDelay = `${i * 0.1}s`; li.innerHTML = `<span class="order-rank">${i+1}.</span> ${p}`; ul.appendChild(li); });
+                display.appendChild(ul);
+            }
+        }
+        function resetConfiance() { document.getElementById('conf-result').classList.add('hidden'); document.getElementById('conf-setup').classList.remove('hidden'); }
+        
+        renderConfSetup();
+    </script>
+</body>
+</html>
