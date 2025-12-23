@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jeu de la Complicité</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>🎲 Jeu de la Complicité</h1>
+
+  <div class="modes">
+    <button onclick="setMode('classic')">Mode Classique</button>
+    <button onclick="setMode('icam')">🎓 Mode ICAM</button>
+  </div>
+
+  <div class="card">
+    <p id="word">Choisis un mode</p>
+    <button onclick="newWord()">Nouveau mot</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
