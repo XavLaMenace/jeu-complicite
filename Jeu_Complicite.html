@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jeu de la Complicité - Ultimate</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --text-main: #E0E0E0;
+            --neon-blue: #00bcd4;
+            --neon-pink: #ff4081;
+            --neon-green: #00e676;
+            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+            padding: 20px 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+            margin: 0 0 10px 0;
+        }
+
+        /* --- SETUP SCREEN --- */
+        .config-box {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Espace uniforme entre tous les éléments */
+        }
+
+        /* Lignes de configuration uniformes */
+        .config-row {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-sizing: border-box; /* Important pour l'alignement */
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: -5px; /* Rapproche le label de l'input */
+            margin-left: 2px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #121212;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            box-sizing: border-box; /* Assure que padding ne casse pas la largeur */
+        }
+        
+        input:focus { outline: none; border-color: var(--neon-blue); }
+
+        /* --- SCOREBOARD --- */
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            margin-bottom: 10px;
+        }
+
+        .team-score-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            transition: all 0.3s;
+        }
+
+        .ts-name { font-size: 0.85rem; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
+        .ts-val { font-size: 1.8rem; font-weight: bold; }
+
+        .team-active .ts-name { color: var(--neon-green); }
+        .team-active .ts-val { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 230, 118, 0.4); transform: scale(1.1); }
+        
+        .vs-divider { color: #444; font-weight: bold; padding: 0 10px; }
+
+        /* --- ZONE DE JEU --- */
+        .turn-text { text-align: center; color: #aaa; margin-bottom: 5px; }
+        
+        .hold-zone {
+            flex-grow: 1;
+            max-height: 40vh;
+            background: #1a1a1a;
+            border: 2px dashed #444;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            cursor: pointer;
+            position: relative;
+            touch-action: none;
+            margin: 10px 0;
+        }
+
+        .hold-zone.holding {
+            background: #000;
+            border-color: var(--neon-blue);
+            box-shadow: inset 0 0 30px rgba(0, 188, 212, 0.2);
+        }
+
+        #word-display {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: white;
+            display: none;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        #hold-instruction { color: #666; font-size: 0.9rem; pointer-events: none; text-align: center; }
+
+        /* --- BOUTONS --- */
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .btn-round { border-radius: 50px; margin-bottom: 8px; }
+        
+        .btn-primary { background-color: var(--neon-blue); color: #000; }
+        .btn-success { background-color: var(--neon-green); color: #000; }
+        .btn-danger { background-color: var(--neon-pink); }
+        .btn-neutral { background-color: #444; color: #ccc; }
+        
+        .btn-icon { 
+            width: 50px; /* Largeur fixe pour le bouton delete */
+            flex-shrink: 0;
+            padding: 0; 
+            height: 45px; /* Hauteur de l'input */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.2rem; 
+            margin-bottom: 0;
+        }
+
+        /* --- MODALES --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex; justify-content: center; align-items: center; z-index: 100;
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 30px; border-radius: 15px;
+            text-align: center; width: 80%; border: 1px solid var(--neon-blue);
+        }
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+    <div id="screen-setup" class="container">
+        <h1>Complicité</h1>
+        
+        <div class="config-box">
+            <div style="display:flex; flex-direction:column; gap:5px; margin-bottom:10px;">
+                <label>Objectif de points (0 = Infini)</label>
+                <div class="config-row">
+                    <input type="number" id="win-score-input" placeholder="Ex: 10" value="">
+                </div>
+            </div>
+            
+            <div style="width:100%; height:1px; background:#333; margin: 5px 0;"></div>
+
+            <label>Équipes</label>
+            <div id="teams-container" style="display:flex; flex-direction:column; gap:10px;">
+                </div>
+            
+            <button class="btn btn-neutral" onclick="addTeam()" style="margin-top:10px; border:1px dashed #666;">+ Ajouter Équipe</button>
+        </div>
+
+        <button class="btn btn-primary" onclick="startGame()">Lancer la partie</button>
+    </div>
+
+    <div id="screen-game" class="container hidden">
+        
+        <div id="scoreboard" class="score-board"></div>
+
+        <div class="turn-text" id="turn-indicator">Préparez-vous...</div>
+
+        <div id="hold-btn" class="hold-zone">
+            <div id="hold-instruction">👆 MAINTIENS POUR VOIR</div>
+            <div id="word-display">MOT</div>
+        </div>
+
+        <div>
+            <button class="btn btn-success btn-round" id="btn-win" onclick="roundEnd('win')">✅ Trouvé !</button>
+            <button class="btn btn-danger btn-round" id="btn-steal" onclick="handleStealAttempt()">😈 Intercepté !</button>
+            <button class="btn btn-neutral btn-round" onclick="roundEnd('skip')">☠️ Raté / Tabou</button>
+        </div>
+    </div>
+
+    <div id="modal-steal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="color:var(--neon-pink)">Qui a volé le point ?</h3>
+            <div id="steal-buttons-container" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;"></div>
+            <button class="btn btn-neutral" style="margin-top:15px;" onclick="closeModal('modal-steal')">Annuler</button>
+        </div>
+    </div>
+
+    <div id="modal-victory" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h1 style="font-size:3rem;">🏆</h1>
+            <h2 id="winner-name" style="color:var(--neon-green)">VICTOIRE</h2>
+            <button class="btn btn-primary" onclick="resetGame()" style="margin-top:20px;">Rejouer</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DONNEES MASSIVES ---
+        const baseWords = [
+            // OBJETS DU QUOTIDIEN
+            "Brosse à dents", "Micro-ondes", "Chaussette", "Télécommande", "Canapé", "Oreiller", "PQ", "Chargeur",
+            "Cuit-vapeur", "Glaçon", "Cadenas", "Trombone", "Ventilateur", "Presse-ail", "Bouilloire", "Miroir",
+            "Clé USB", "Parapluie", "Valise", "Tong", "Casquette", "Sèche-cheveux", "Lave-vaisselle", "Poubelle",
+            
+            // LIEUX
+            "Camping", "Plage", "Prison", "Hôpital", "Ascenseur", "Toilettes", "Cinéma", "Ikea", "Aéroport",
+            "Gare", "Bibliothèque", "Piscine municipale", "Sauna", "Grenier", "Cave", "Boîte de nuit", "Kebab",
+            "Musée", "Salle de sport", "Bureau de tabac", "Pharmacie", "Boulangerie", "Montagne", "Autoroute",
+            
+            // NOURRITURE & BOISSON
+            "Pizza", "Raclette", "Sushi", "Ketchup", "Mayonnaise", "Cornichon", "Tequila", "Champagne", "Eau du robinet",
+            "Café froid", "Croissant", "Baguette", "Camembert", "Chocolat", "Barbecue", "Lasagnes", "Chips", "Huître",
+            "Kebab", "Burger", "Gluten", "Végan", "Brocoli", "Épinards", "Mojito", "Bière", "Glaçon",
+            
+            // SITUATIONS / CONCEPTS
+            "Divorce", "Mariage", "Enterrement", "Lendemain de cuite", "Rendez-vous Tinder", "Grève", "Bouchons",
+            "Retard", "Chômage", "Baccalauréat", "Permis de conduire", "Déménagement", "Insomnie", "Régime",
+            "Gueule de bois", "Coup de soleil", "Piqûre de moustique", "Hoquet", "Éternuement", "Ronflement",
+            "Puberté", "Retraite", "Sieste", "Cauchemar", "Fou rire", "Secret", "Mensonge", "Honte",
+            
+            // PERSONNAGES / POP CULTURE (Génériques)
+            "Père Noël", "Harry Potter", "Batman", "Zidane", "Macron", "La Reine d'Angleterre", "Jésus", "Mickey",
+            "Pikachu", "Dracula", "James Bond", "Shrek", "Titanic", "Star Wars", "Netflix", "Instagram", "TikTok",
+            "Wi-Fi", "Smartphone", "Bluetooth", "Batterie faible", "Spoiler", "Influenceur", "Selfie",
+            
+            // ANIMAUX & NATURE
+            "Pigeon", "Moustique", "Licorne", "Dinosaure", "Requin", "Chat", "Chien", "Lama", "Panda", "Cafard",
+            "Araignée", "Méduse", "Vache", "Cochon", "Poule", "Serpent", "Orage", "Neige", "Canicule", "Arc-en-ciel",
+            
+            // RANDOM / DRÔLE
+            "Belle-mère", "Ex-copain", "Patron", "Voisin", "Colocataire", "Facteur", "Dentiste", "Gynécologue",
+            "Plombier", "Politicien", "Vampire", "Fantôme", "Zombie", "Extraterrestre", "Robot", "Clown",
+            "Soutien-gorge", "Caleçon", "String", "Pyjama", "Déodorant", "Pieds qui puent", "Cheveux gras",
+            "Bouton d'acné", "Lunettes", "Appareil dentaire", "Béquilles", "Plâtre", "Vaccin", "Test PCR",
+            
+            // VERBES / ACTIONS
+            "Vomir", "Danser", "Pleurer", "Crier", "Chuchoter", "Courir", "Dormir", "Manger", "Draguer",
+            "Tromper", "Voler", "Mentir", "Se perdre", "Tomber", "Glisser", "Payer", "Nettoyer", "Cuisiner"
+        ];
+        
+        let words = [...baseWords];
+        let teams = [
+            { id: 1, name: "Équipe A", score: 0 },
+            { id: 2, name: "Équipe B", score: 0 }
+        ];
+        let winningScore = 0;
+        let currentTeamIndex = 0;
+
+        // --- SETUP ---
+        function renderSetup() {
+            const container = document.getElementById('teams-container');
+            container.innerHTML = "";
+            
+            teams.forEach((team, index) => {
+                const row = document.createElement('div');
+                row.className = 'config-row';
+                
+                // Input Nom
+                const input = document.createElement('input');
+                input.value = team.name;
+                input.onchange = (e) => teams[index].name = e.target.value;
+                input.placeholder = "Nom Équipe";
+
+                row.appendChild(input);
+
+                // Bouton Suppr (si > 2 équipes)
+                if (teams.length > 2) {
+                    const btnDel = document.createElement('button');
+                    btnDel.innerText = "✕";
+                    btnDel.className = "btn btn-danger btn-icon";
+                    btnDel.onclick = () => removeTeam(index);
+                    row.appendChild(btnDel);
+                }
+                container.appendChild(row);
+            });
+        }
+
+        function addTeam() {
+            teams.push({ id: Date.now(), name: `Équipe ${teams.length + 1}`, score: 0 });
+            renderSetup();
+        }
+
+        function removeTeam(index) {
+            if (teams.length <= 2) return;
+            teams.splice(index, 1);
+            renderSetup();
+        }
+
+        // --- JEU ---
+        function startGame() {
+            const scoreInput = document.getElementById('win-score-input').value;
+            winningScore = scoreInput ? parseInt(scoreInput) : 0;
+            
+            teams.forEach(t => t.score = 0);
+            currentTeamIndex = 0;
+            
+            document.getElementById('screen-setup').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            nextRound();
+        }
+
+        function pickRandomWord() {
+            if (words.length === 0) words = [...baseWords];
+            const idx = Math.floor(Math.random() * words.length);
+            const w = words[idx];
+            words.splice(idx, 1);
+            return w;
+        }
+
+        function nextRound() {
+            checkVictory();
+            const word = pickRandomWord();
+            document.getElementById('word-display').innerText = word;
+            updateUI();
+        }
+
+        function updateUI() {
+            const activeTeam = teams[currentTeamIndex];
+            
+            // 1. Scoreboard Logic
+            const sb = document.getElementById('scoreboard');
+            sb.innerHTML = "";
+            
+            if (teams.length === 2) {
+                // Mode Duel (Style V1)
+                const t1 = teams[0];
+                const t2 = teams[1];
+                sb.innerHTML = `
+                    <div class="team-score-box ${currentTeamIndex === 0 ? 'team-active' : ''}">
+                        <div class="ts-name">${t1.name}</div>
+                        <div class="ts-val">${t1.score}</div>
+                    </div>
+                    <div class="vs-divider">VS</div>
+                    <div class="team-score-box ${currentTeamIndex === 1 ? 'team-active' : ''}">
+                        <div class="ts-name">${t2.name}</div>
+                        <div class="ts-val">${t2.score}</div>
+                    </div>
+                `;
+            } else {
+                // Mode Multi (Grid)
+                teams.forEach((t, idx) => {
+                    const div = document.createElement('div');
+                    div.className = `team-score-box ${idx === currentTeamIndex ? 'team-active' : ''}`;
+                    div.innerHTML = `<div class="ts-name">${t.name}</div><div class="ts-val">${t.score}</div>`;
+                    sb.appendChild(div);
+                });
+            }
+
+            // 2. Textes
+            document.getElementById('turn-indicator').innerHTML = `Au tour de <b style="color:var(--neon-green)">${activeTeam.name}</b>`;
+            document.getElementById('btn-win').innerText = `✅ Trouvé par ${activeTeam.name} (+1)`;
+        }
+
+        function handleStealAttempt() {
+            if (teams.length === 2) {
+                const otherIdx = currentTeamIndex === 0 ? 1 : 0;
+                roundEnd('steal', otherIdx);
+            } else {
+                const container = document.getElementById('steal-buttons-container');
+                container.innerHTML = "";
+                teams.forEach((t, idx) => {
+                    if (idx !== currentTeamIndex) {
+                        const btn = document.createElement('button');
+                        btn.className = "btn btn-primary";
+                        btn.innerText = t.name;
+                        btn.onclick = () => {
+                            closeModal('modal-steal');
+                            roundEnd('steal', idx);
+                        };
+                        container.appendChild(btn);
+                    }
+                });
+                document.getElementById('modal-steal').classList.remove('hidden');
+            }
+        }
+
+        function roundEnd(type, beneficiaryIndex = null) {
+            if (type === 'win') {
+                teams[currentTeamIndex].score++;
+            } else if (type === 'steal' && beneficiaryIndex !== null) {
+                teams[beneficiaryIndex].score++;
+            }
+            
+            currentTeamIndex = (currentTeamIndex + 1) % teams.length;
+            nextRound();
+        }
+
+        function checkVictory() {
+            if (winningScore > 0) {
+                const winner = teams.find(t => t.score >= winningScore);
+                if (winner) {
+                    document.getElementById('winner-name').innerText = `${winner.name} GAGNE !`;
+                    document.getElementById('modal-victory').classList.remove('hidden');
+                }
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('modal-victory').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-setup').classList.remove('hidden');
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // --- EVENTS ---
+        const holdBtn = document.getElementById('hold-btn');
+        const wordDisplay = document.getElementById('word-display');
+        const holdInst = document.getElementById('hold-instruction');
+
+        const show = (e) => { if(e.cancelable) e.preventDefault(); holdBtn.classList.add('holding'); wordDisplay.style.display='block'; holdInst.style.display='none'; };
+        const hide = (e) => { if(e.cancelable) e.preventDefault(); holdBtn.classList.remove('holding'); wordDisplay.style.display='none'; holdInst.style.display='block'; };
+
+        holdBtn.addEventListener('mousedown', show);
+        holdBtn.addEventListener('mouseup', hide);
+        holdBtn.addEventListener('mouseleave', hide);
+        holdBtn.addEventListener('touchstart', show, {passive:false});
+        holdBtn.addEventListener('touchend', hide);
+
+        renderSetup();
+
+    </script>
+</body>
+</html>
