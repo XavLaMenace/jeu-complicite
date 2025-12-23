@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Complicité</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="top-nav"><a href="index.html" class="btn-home">🏠</a></div>
+        
+        <div id="comp-setup">
+            <h1 style="color:var(--neon-blue); text-shadow: 0 0 10px rgba(0, 188, 212, 0.4);">Complicité</h1>
+            <div class="config-box">
+                <div style="display:flex; flex-direction:column; gap:5px; margin-bottom:10px;">
+                    <label>Objectif de points (0 = Infini)</label>
+                    <div class="config-row"><input type="number" id="win-score-input" placeholder="Ex: 10" value=""></div>
+                </div>
+                <div style="width:100%; height:1px; background:#333; margin: 5px 0;"></div>
+                <label>Équipes</label>
+                <div id="teams-container" style="display:flex; flex-direction:column; gap:10px;"></div>
+                <button class="btn btn-neutral" onclick="addTeam()" style="margin-top:10px; border:1px dashed #555;">+ Ajouter Équipe</button>
+            </div>
+            <button class="btn btn-primary" onclick="startCompliciteGame()" style="margin-top:15px;">Lancer la partie</button>
+        </div>
+
+        <div id="comp-game" class="hidden" style="height:100%; display:flex; flex-direction:column;">
+            <h1 style="color:var(--neon-blue)">Complicité</h1>
+            <div id="scoreboard" class="score-board"></div>
+            <div class="turn-text" id="turn-indicator">Préparez-vous...</div>
+            <div id="hold-btn" class="hold-zone">
+                <div id="hold-instruction">👆 MAINTIENS POUR VOIR</div>
+                <div id="word-display">MOT</div>
+            </div>
+            <div>
+                <button class="btn btn-success btn-round" id="btn-win" onclick="roundEnd('win')">✅ Trouvé !</button>
+                <button class="btn btn-danger btn-round" id="btn-steal" onclick="handleStealAttempt()">😈 Intercepté !</button>
+                <button class="btn btn-neutral btn-round" onclick="roundEnd('skip')">☠️ Raté / Tabou</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-steal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="color:var(--neon-pink)">Qui a volé le point ?</h3>
+            <div id="steal-buttons-container" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;"></div>
+            <button class="btn btn-neutral" style="margin-top:15px;" onclick="closeModal('modal-steal')">Annuler</button>
+        </div>
+    </div>
+    <div id="modal-victory" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h1 style="font-size:3rem;">🏆</h1>
+            <h2 id="winner-name" style="color:var(--neon-green)">VICTOIRE</h2>
+            <button class="btn btn-primary" onclick="resetComplicite()" style="margin-top:20px;">Rejouer</button>
+        </div>
+    </div>
+
+    <script>
+        const baseWords = ["Brosse à dents", "Micro-ondes", "Chaussette", "Télécommande", "Canapé", "Oreiller", "PQ", "Chargeur", "Camping", "Plage", "Prison", "Hôpital", "Ascenseur", "Pizza", "Raclette", "Sushi", "Ketchup", "Divorce", "Mariage", "Enterrement", "Harry Potter", "Batman", "Zidane", "Macron", "Pigeon", "Moustique", "Licorne", "Dinosaure", "Vomir", "Danser", "Pleurer", "Crier"];
+        let words = [...baseWords];
+        let teams = [{ id: 1, name: "Équipe A", score: 0 }, { id: 2, name: "Équipe B", score: 0 }];
+        let winningScore = 0;
+        let currentTeamIndex = 0;
+
+        function renderSetup() {
+            const container = document.getElementById('teams-container');
+            container.innerHTML = "";
+            teams.forEach((team, index) => {
+                const row = document.createElement('div');
+                row.className = 'config-row';
+                const input = document.createElement('input');
+                input.value = team.name;
+                input.onchange = (e) => teams[index].name = e.target.value;
+                input.placeholder = "Nom Équipe";
+                row.appendChild(input);
+                if (teams.length > 2) { const btnDel = document.createElement('button'); btnDel.innerText = "✕"; btnDel.className = "btn btn-danger btn-icon"; btnDel.onclick = () => removeTeam(index); row.appendChild(btnDel); }
+                container.appendChild(row);
+            });
+        }
+        function addTeam() { teams.push({ id: Date.now(), name: `Équipe ${teams.length + 1}`, score: 0 }); renderSetup(); }
+        function removeTeam(index) { if (teams.length <= 2) return; teams.splice(index, 1); renderSetup(); }
+        function startCompliciteGame() {
+            const scoreInput = document.getElementById('win-score-input').value;
+            winningScore = scoreInput ? parseInt(scoreInput) : 0;
+            teams.forEach(t => t.score = 0); currentTeamIndex = 0;
+            document.getElementById('comp-setup').classList.add('hidden'); document.getElementById('comp-game').classList.remove('hidden'); nextRound();
+        }
+        function pickRandomWord() { if (words.length === 0) words = [...baseWords]; const idx = Math.floor(Math.random() * words.length); const w = words[idx]; words.splice(idx, 1); return w; }
+        function nextRound() { checkVictory(); const word = pickRandomWord(); document.getElementById('word-display').innerText = word; updateCompUI(); }
+        function updateCompUI() {
+            const activeTeam = teams[currentTeamIndex];
+            const sb = document.getElementById('scoreboard'); sb.innerHTML = "";
+            if (teams.length === 2) {
+                const t1 = teams[0]; const t2 = teams[1];
+                sb.innerHTML = `<div class="team-score-box ${currentTeamIndex === 0 ? 'team-active' : ''}"><div class="ts-name">${t1.name}</div><div class="ts-val">${t1.score}</div></div><div class="vs-divider">VS</div><div class="team-score-box ${currentTeamIndex === 1 ? 'team-active' : ''}"><div class="ts-name">${t2.name}</div><div class="ts-val">${t2.score}</div></div>`;
+            } else { teams.forEach((t, idx) => { const div = document.createElement('div'); div.className = `team-score-box ${idx === currentTeamIndex ? 'team-active' : ''}`; div.innerHTML = `<div class="ts-name">${t.name}</div><div class="ts-val">${t.score}</div>`; sb.appendChild(div); }); }
+            document.getElementById('turn-indicator').innerHTML = `Au tour de <b style="color:var(--neon-green)">${activeTeam.name}</b>`;
+            document.getElementById('btn-win').innerText = `✅ Trouvé par ${activeTeam.name} (+1)`;
+        }
+        function handleStealAttempt() {
+            if (teams.length === 2) { const otherIdx = currentTeamIndex === 0 ? 1 : 0; roundEnd('steal', otherIdx); } else {
+                const container = document.getElementById('steal-buttons-container'); container.innerHTML = "";
+                teams.forEach((t, idx) => { if (idx !== currentTeamIndex) { const btn = document.createElement('button'); btn.className = "btn btn-primary"; btn.innerText = t.name; btn.onclick = () => { closeModal('modal-steal'); roundEnd('steal', idx); }; container.appendChild(btn); } });
+                document.getElementById('modal-steal').classList.remove('hidden');
+            }
+        }
+        function roundEnd(type, beneficiaryIndex = null) {
+            if (type === 'win') { teams[currentTeamIndex].score++; } else if (type === 'steal' && beneficiaryIndex !== null) { teams[beneficiaryIndex].score++; }
+            currentTeamIndex = (currentTeamIndex + 1) % teams.length; nextRound();
+        }
+        function checkVictory() { if (winningScore > 0) { const winner = teams.find(t => t.score >= winningScore); if (winner) { document.getElementById('winner-name').innerText = `${winner.name} GAGNE !`; document.getElementById('modal-victory').classList.remove('hidden'); } } }
+        function resetComplicite() { document.getElementById('modal-victory').classList.add('hidden'); document.getElementById('comp-game').classList.add('hidden'); document.getElementById('comp-setup').classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        const holdBtn = document.getElementById('hold-btn'); const wordDisplay = document.getElementById('word-display'); const holdInst = document.getElementById('hold-instruction');
+        const show = (e) => { if(e.cancelable) e.preventDefault(); holdBtn.classList.add('holding'); wordDisplay.style.display='block'; holdInst.style.display='none'; };
+        const hide = (e) => { if(e.cancelable) e.preventDefault(); holdBtn.classList.remove('holding'); wordDisplay.style.display='none'; holdInst.style.display='block'; };
+        holdBtn.addEventListener('mousedown', show); holdBtn.addEventListener('mouseup', hide); holdBtn.addEventListener('mouseleave', hide);
+        holdBtn.addEventListener('touchstart', show, {passive:false}); holdBtn.addEventListener('touchend', hide);
+        
+        renderSetup();
+    </script>
+</body>
+</html>
