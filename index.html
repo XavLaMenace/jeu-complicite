@@ -6,14 +6,14 @@
     <title>Mes Jeux de Soirée</title>
     <style>
         :root {
-            --bg-color: #0a0a0a; /* Noir très profond */
+            --bg-color: #0a0a0a;
             --card-bg: #151515;
             --text-main: #E0E0E0;
-            --neon-blue: #00bcd4;   /* Complicité */
-            --neon-pink: #ff4081;   /* Actions / Error */
-            --neon-green: #00e676;  /* Success */
-            --neon-purple: #d500f9; /* Confiance (Plus vibrant) */
-            --neon-orange: #ff3d00; /* Undercover (Plus vibrant) */
+            --neon-blue: #00bcd4;
+            --neon-pink: #ff4081;
+            --neon-green: #00e676;
+            --neon-purple: #d500f9;
+            --neon-orange: #ff3d00;
             --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
@@ -57,9 +57,10 @@
             font-size: 1.5rem;
             cursor: pointer;
             padding: 10px;
-            transition: 0.2s;
+            transition: transform 0.2s ease;
         }
-        .btn-home:active { transform: scale(0.9); color: white; }
+        .btn-home:hover { transform: scale(1.2); color: white; }
+        .btn-home:active { transform: scale(0.9); }
 
         /* --- TYPOGRAPHY --- */
         h1 {
@@ -70,7 +71,6 @@
             margin: 0 0 5px 0;
         }
 
-        /* Titre Spécifique Accueil */
         .hub-title {
             font-size: 2.5rem;
             color: white;
@@ -111,7 +111,7 @@
             border-radius: 16px;
             padding: 25px 20px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease; /* Transition fluide */
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -121,36 +121,31 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
-        /* Effet de lueur sur le côté */
+        /* --- HOVER EFFECT CARTES --- */
+        .game-card:hover {
+            transform: scale(1.03); /* Agrandissement léger */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7); /* Ombre plus profonde */
+            z-index: 1;
+        }
+
         .game-card::before {
             content: '';
             position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: #fff; /* Sera écrasé par style inline */
+            left: 0; top: 0; bottom: 0; width: 4px;
+            background: #fff;
             box-shadow: 2px 0 15px currentColor;
         }
 
-        .game-card:active {
-            transform: scale(0.98);
-            background: #222;
-        }
+        .game-card:active { transform: scale(0.98); background: #222; }
 
         .game-card-icon { font-size: 2.2rem; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
         .game-card-text { text-align: left; }
         .game-card h3 { 
-            margin: 0; 
-            font-size: 1.3rem; 
-            font-weight: 400; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            margin-bottom: 4px;
+            margin: 0; font-size: 1.3rem; font-weight: 400; 
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
         }
         .game-card p { margin: 0; color: #666; font-size: 0.8rem; font-style: italic; }
 
-        /* Variantes de couleurs pour les cartes */
         .card-blue { border-left-color: var(--neon-blue); }
         .card-blue h3 { color: var(--neon-blue); text-shadow: 0 0 10px rgba(0, 188, 212, 0.3); }
         .card-blue::before { background: var(--neon-blue); box-shadow: 2px 0 20px var(--neon-blue); }
@@ -192,8 +187,16 @@
         .btn {
             padding: 15px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold;
             cursor: pointer; width: 100%; text-transform: uppercase; color: #fff; margin-bottom: 10px;
-            box-sizing: border-box; letter-spacing: 1px; transition: 0.2s;
+            box-sizing: border-box; letter-spacing: 1px; 
+            transition: transform 0.2s, filter 0.2s; /* Transition fluide */
         }
+        
+        /* --- HOVER EFFECT BOUTONS --- */
+        .btn:hover {
+            transform: scale(1.02); /* Agrandissement léger */
+            filter: brightness(1.1); /* Plus lumineux */
+        }
+        
         .btn:active { transform: scale(0.98); opacity: 0.9; }
         .btn-round { border-radius: 50px; margin-bottom: 8px; }
         
@@ -251,8 +254,8 @@
     <div id="view-hub" class="container">
         
         <div style="text-align:center;">
-            <h1 class="hub-title">JEUX DE COIFFEURS</h1>
-            <div class="tagline">100% ICAM 100% COIFFEURS 100%DOLCE</div>
+            <h1 class="hub-title">MES JEUX</h1>
+            <div class="tagline">Plateforme Non-Officielle</div>
         </div>
 
         <div class="hub-grid">
@@ -285,8 +288,7 @@
 
         <div class="credits">
             Fait par <span>@francois.grcia</span><br>
-            et <span>@xav_le_toums</span><br>
-            (anciennement @xavier_le_vrai)
+            et <span>@xav_le_toums</span>
         </div>
     </div>
 
