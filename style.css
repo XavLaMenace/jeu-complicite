@@ -16,7 +16,7 @@ body {
     background-color: var(--bg-color);
 
     /* background image (relative to index.html) */
-    background-image: url('https://picsum.photos/800/1200');
+    background-image: url('assets/bg.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
