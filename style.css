@@ -1,12 +1,10 @@
-/* --- VARIABLES ET RESET --- */
 :root {
     --bg-color: #050505;
-    --card-bg: rgba(15, 15, 15, 0.98);
+    --card-bg: rgba(20, 20, 20, 0.9);
     --neon-blue: #00bcd4;
     --neon-purple: #d500f9;
     --neon-orange: #ff3d00;
     --neon-green: #00e676;
-    --text-color: #ffffff;
 }
 
 * { box-sizing: border-box; }
@@ -17,151 +15,125 @@ body {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: var(--text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
     margin: 0;
     height: 100vh;
     display: flex;
     justify-content: center;
-    overflow: hidden; /* Empêche le scroll inutile sur PC */
+    overflow: hidden;
 }
 
+/* Fond plus transparent pour voir l'image derrière */
 body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.88); /* Background très opaque pour le contraste */
+    background: rgba(0, 0, 0, 0.6); 
     z-index: -1;
 }
 
-/* --- LAYOUT PRINCIPAL --- */
 .container {
-    width: 100%;
+    width: 95%;
     max-width: 500px;
     height: 100vh;
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    position: relative;
-    z-index: 1;
 }
 
-/* --- INDEX / HUB --- */
-.hub-title { font-size: 2rem; text-align: center; margin: 10px 0 5px 0; letter-spacing: 2px; }
-.tagline { font-size: 0.8rem; text-align: center; color: #888; margin-bottom: 20px; }
-
-.hub-grid { display: flex; flex-direction: column; gap: 12px; }
+/* --- ACCUEIL : BOUTONS PLUS GROS --- */
+.hub-grid { display: flex; flex-direction: column; gap: 15px; }
 
 .game-card {
     background: var(--card-bg);
-    border-radius: 15px;
-    padding: 15px 20px;
+    border-radius: 20px;
+    padding: 30px 25px; /* Grossi ici */
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     text-decoration: none;
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: 0.3s;
 }
 
-.game-card:hover { transform: scale(1.02); background: rgba(30,30,30,1); }
-.card-blue { border-left: 5px solid var(--neon-blue); }
-.card-orange { border-left: 5px solid var(--neon-orange); }
-.card-purple { border-left: 5px solid var(--neon-purple); }
+.game-card:hover { transform: scale(1.03); background: rgba(40, 40, 40, 0.95); }
 
-.game-card-icon { font-size: 2rem; }
-.game-card-text h3 { margin: 0; font-size: 1.1rem; }
-.game-card-text p { margin: 2px 0 0 0; font-size: 0.8rem; color: #aaa; }
+.game-card-icon { font-size: 3rem; } /* Icone plus grosse */
+.game-card-text h3 { margin: 0; font-size: 1.6rem; } /* Titre plus gros */
+.game-card-text p { margin-top: 5px; font-size: 1rem; color: #ccc; }
 
-/* --- LE SAVIEZ-VOUS (INDEX) --- */
-.did-you-know {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(0, 188, 212, 0.1);
-    border: 1px solid var(--neon-blue);
-    border-radius: 12px;
-    text-align: center;
-}
-.dyk-title { font-weight: bold; color: var(--neon-blue); font-size: 0.9rem; margin-bottom: 5px; }
-.dyk-content { font-style: italic; font-size: 0.9rem; }
-
-/* --- CONFIGURATION DES JEUX (TEAM / PLAYERS) --- */
-.config-box {
-    background: var(--card-bg);
-    border-radius: 20px;
-    padding: 15px;
-    border: 1px solid rgba(255,255,255,0.1);
-    max-height: 60vh;
-    overflow-y: auto; /* Scroll interne si trop de joueurs */
-}
-
+/* --- INPUTS DES JEUX (FINI LE BLANC) --- */
 .config-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: rgba(255,255,255,0.05);
-    margin-bottom: 8px;
+    background: rgba(40, 40, 40, 0.6); /* Gris foncé transparent */
+    margin-bottom: 10px;
     padding: 5px 15px;
-    border-radius: 10px;
-    border-bottom: 2px solid transparent;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: 0.3s;
 }
-
-.config-row:focus-within { border-bottom-color: var(--neon-blue); background: rgba(255,255,255,0.08); }
 
 input[type="text"], input[type="number"] {
     background: transparent !important;
     border: none !important;
     color: white !important;
-    padding: 10px 0 !important;
-    font-size: 1rem !important;
+    padding: 12px 0 !important;
+    font-size: 1.1rem !important;
     width: 100%;
     outline: none !important;
 }
 
+.config-row:focus-within {
+    border-color: var(--neon-blue);
+    background: rgba(0, 188, 212, 0.15);
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.2);
+}
+
+/* --- LE SAVIEZ-VOUS --- */
+.did-you-know {
+    margin: 25px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border-left: 5px solid var(--neon-blue);
+    text-align: center;
+}
+.dyk-title { font-weight: 900; color: var(--neon-blue); margin-bottom: 5px; }
+.dyk-content { font-size: 1.1rem; color: #eee; }
+
 /* --- BOUTONS --- */
 .btn {
-    padding: 14px;
-    border-radius: 12px;
+    padding: 18px;
+    border-radius: 15px;
     border: none;
-    font-weight: bold;
+    font-weight: 900;
     text-transform: uppercase;
     cursor: pointer;
-    transition: 0.2s;
     width: 100%;
     margin-top: 10px;
 }
 .btn-primary { background: var(--neon-blue); color: #000; }
 .btn-orange { background: var(--neon-orange); color: #000; }
-.btn-purple { background: var(--neon-purple); color: #000; }
 .btn-neutral { background: rgba(255,255,255,0.1); color: #fff; }
-.btn-danger { background: none; color: #ff4444; border: 1px solid #ff4444; width: 35px; height: 35px; padding: 0; }
+.btn-danger { background: rgba(255, 0, 0, 0.2); color: #ff4444; border: 1px solid #ff4444; width: 45px; height: 45px; }
 
-/* --- ELEMENTS DE JEUX SPECIFIQUES --- */
-.score-board { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
-.team-score-box { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 10px; text-align: center; flex: 1; border: 2px solid transparent; }
-.team-active { border-color: var(--neon-green); background: rgba(0, 230, 118, 0.1); }
-
-.hold-zone { border: 2px dashed #444; padding: 30px; border-radius: 20px; text-align: center; margin: 15px 0; cursor: pointer; }
-.hold-zone.holding { border-color: var(--neon-blue); background: rgba(0, 188, 212, 0.1); border-style: solid; }
-
-.big-result { font-size: 2.5rem; font-weight: 800; text-align: center; margin: 15px 0; color: white; text-shadow: 0 0 15px var(--neon-purple); }
-
-/* --- MODALES --- */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal-content { background: #111; padding: 25px; border-radius: 20px; text-align: center; width: 85%; border: 1px solid #333; }
-
-/* --- FOOTER --- */
+/* --- CREDITS --- */
 .credits {
     margin-top: auto;
-    padding: 20px 0;
+    padding: 25px 0;
     text-align: center;
-    font-size: 0.85rem;
-    color: #eee;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
 }
-.credits span { color: var(--neon-orange); font-weight: bold; }
+.credits span { color: var(--neon-orange); text-shadow: 0 0 10px rgba(255, 61, 0, 0.5); }
 
+/* --- AUTRES --- */
+.config-box { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
 .hidden { display: none !important; }
-.top-nav { margin-bottom: 5px; }
-.btn-home { text-decoration: none; font-size: 1.5rem; }
-/* End of file */
+.card-blue { border-left: 8px solid var(--neon-blue); }
+.card-orange { border-left: 8px solid var(--neon-orange); }
+.card-purple { border-left: 8px solid var(--neon-purple); }
