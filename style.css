@@ -1,242 +1,178 @@
 :root {
-            --bg-color: #0a0a0a;
-            --card-bg: #151515;
-            --text-main: #E0E0E0;
-            --neon-blue: #00bcd4;
-            --neon-pink: #ff4081;
-            --neon-green: #00e676;
-            --neon-purple: #d500f9;
-            --neon-orange: #ff3d00;
-            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+    --bg-color: #0a0a0a;
+    --card-bg: #151515;
+    --text-main: #E0E0E0;
+    --neon-blue: #00bcd4;
+    --neon-pink: #ff4081;
+    --neon-green: #00e676;
+    --neon-purple: #d500f9;
+    --neon-orange: #ff3d00;
+    --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-family);
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+/* --- BACKGROUND IMAGE + OVERLAY --- */
+body {
+    /* fallback color if image does not load */
+    background-color: var(--bg-color);
 
-        .container {
-            width: 90%;
-            max-width: 450px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            height: 100%;
-            padding: 20px 0;
-            box-sizing: border-box;
-            position: relative;
-        }
+    /* background image (relative to index.html) */
+    background-image: url('assets/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 
-        /* --- NAVIGATION --- */
-        .top-nav {
-            position: absolute;
-            top: 10px;
-            left: 0;
-            z-index: 10;
-        }
-        .btn-home {
-            text-decoration: none;
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 10px;
-            transition: transform 0.2s ease;
-        }
-        .btn-home:hover { transform: scale(1.2); color: white; }
-        .btn-home:active { transform: scale(0.9); }
+    color: var(--text-main);
+    font-family: var(--font-family);
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
 
-        /* --- TYPOGRAPHY --- */
-        h1 {
-            text-align: center;
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin: 0 0 5px 0;
-        }
+/* overlay to improve text readability */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    pointer-events: none;
+    z-index: 0;
+}
 
-        .hub-title {
-            font-size: 2.5rem;
-            color: white;
-            text-shadow: 
-                0 0 10px rgba(0, 188, 212, 0.5),
-                0 0 20px rgba(0, 188, 212, 0.3),
-                0 0 40px rgba(0, 188, 212, 0.1);
-            margin-top: 40px;
-            margin-bottom: 0;
-        }
+/* ensure the container sits above the overlay */
+.container {
+    position: relative;
+    z-index: 1;
+    width: 90%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+    padding: 20px 0;
+    box-sizing: border-box;
+}
 
-        .tagline {
-            text-align: center;
-            color: #888;
-            font-size: 0.8rem;
-            font-weight: 300;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-top: 5px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            display: inline-block;
-            padding-bottom: 10px;
-        }
+/* --- NAVIGATION --- */
+.top-nav {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    z-index: 10;
+}
+.btn-home {
+    text-decoration: none;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 10px;
+    transition: transform 0.2s ease;
+}
+.btn-home:hover { transform: scale(1.2); color: white; }
+.btn-home:active { transform: scale(0.9); }
 
-        /* --- MENU HUB (Cartes stylées) --- */
-        .hub-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 20px;
-            width: 100%;
-        }
+/* --- TYPOGRAPHY --- */
+h1 {
+    text-align: center;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin: 0 0 5px 0;
+}
 
-        .game-card {
-            background: linear-gradient(145deg, #1a1a1a, #111);
-            border: 1px solid #222;
-            border-radius: 16px;
-            padding: 25px 20px;
-            cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease; /* Transition fluide */
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 20px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
+.hub-title {
+    font-size: 2.5rem;
+    color: white;
+    text-shadow:
+        0 0 10px rgba(0, 188, 212, 0.5),
+        0 0 20px rgba(0, 188, 212, 0.3),
+        0 0 40px rgba(0, 188, 212, 0.1);
+    margin-top: 40px;
+    margin-bottom: 0;
+}
 
-        /* --- HOVER EFFECT CARTES --- */
-        .game-card:hover {
-            transform: scale(1.03); /* Agrandissement léger */
-            box-shadow: 0 10px 25px rgba(0,0,0,0.7); /* Ombre plus profonde */
-            z-index: 1;
-        }
+.tagline {
+    text-align: center;
+    color: #888;
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    display: inline-block;
+    padding-bottom: 10px;
+}
 
-        .game-card::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0; width: 4px;
-            background: #fff;
-            box-shadow: 2px 0 15px currentColor;
-        }
+/* --- MENU HUB (Cartes stylées) --- */
+.hub-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%;
+}
 
-        .game-card:active { transform: scale(0.98); background: #222; }
+.game-card {
+    background: linear-gradient(145deg, #1a1a1a, #111);
+    border: 1px solid #222;
+    border-radius: 16px;
+    padding: 25px 20px;
+}
 
-        .game-card-icon { font-size: 2.2rem; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
-        .game-card-text { text-align: left; }
-        .game-card h3 { 
-            margin: 0; font-size: 1.3rem; font-weight: 400; 
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
-        }
-        .game-card p { margin: 0; color: #666; font-size: 0.8rem; font-style: italic; }
+/* --- GAME-CARD CONTENT --- */
+.game-card-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+.game-card-text h3 { margin: 0 0 5px 0; }
+.game-card-text p { margin: 0; color: #bbb; font-size: 0.9rem; }
 
-        .card-blue { border-left-color: var(--neon-blue); }
-        .card-blue h3 { color: var(--neon-blue); text-shadow: 0 0 10px rgba(0, 188, 212, 0.3); }
-        .card-blue::before { background: var(--neon-blue); box-shadow: 2px 0 20px var(--neon-blue); }
-        
-        .card-orange { border-left-color: var(--neon-orange); }
-        .card-orange h3 { color: var(--neon-orange); text-shadow: 0 0 10px rgba(255, 61, 0, 0.3); }
-        .card-orange::before { background: var(--neon-orange); box-shadow: 2px 0 20px var(--neon-orange); }
+/* Button styles */
+.btn {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+.btn-neutral { background: #222; color: #ddd; }
+.btn-primary { background: var(--neon-blue); color: #000; }
+.btn-orange { background: var(--neon-orange); color: #000; }
+.btn-purple { background: var(--neon-purple); color: #000; }
+.btn-success { background: #00e676; color: #000; }
+.btn-danger { background: #ff3d00; color: #000; }
+.btn-round { border-radius: 999px; padding: 12px 18px; }
 
-        .card-purple { border-left-color: var(--neon-purple); }
-        .card-purple h3 { color: var(--neon-purple); text-shadow: 0 0 10px rgba(213, 0, 249, 0.3); }
-        .card-purple::before { background: var(--neon-purple); box-shadow: 2px 0 20px var(--neon-purple); }
+/* Hold zone */
+.hold-zone {
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed #333;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+}
+#word-display, #uc-word-display { font-size: 1.4rem; font-weight: 700; }
 
-        /* --- COMMUN UI --- */
-        .config-box {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #333;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow-y: auto;
-            flex-grow: 1;
-            max-height: 65vh;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
+/* Modal overlay */
+.modal-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 20; }
+.modal-content { background: linear-gradient(180deg, #111, #0f0f0f); padding: 20px; border-radius: 12px; border: 1px solid #222; }
+.hidden { display: none; }
 
-        .config-row { width: 100%; display: flex; gap: 10px; align-items: center; box-sizing: border-box; }
-        label { font-size: 0.85rem; color: #888; margin-bottom: -5px; margin-left: 2px; }
+/* Credits */
+.credits { color: #999; font-size: 0.8rem; text-align: center; margin-top: auto; }
 
-        input {
-            width: 100%; padding: 12px; background: #0f0f0f; border: 1px solid #333;
-            border-radius: 6px; color: white; font-size: 1rem; text-align: center; box-sizing: border-box;
-            transition: 0.2s;
-        }
-        input:focus { outline: none; border-color: #555; background: #1a1a1a; }
+/* Responsive tweaks */
+@media (max-width: 480px) {
+    .hub-title { font-size: 2rem; }
+    .container { width: 95%; }
+}
 
-        /* --- BOUTONS --- */
-        .btn {
-            padding: 15px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold;
-            cursor: pointer; width: 100%; text-transform: uppercase; color: #fff; margin-bottom: 10px;
-            box-sizing: border-box; letter-spacing: 1px; 
-            transition: transform 0.2s, filter 0.2s; /* Transition fluide */
-        }
-        
-        /* --- HOVER EFFECT BOUTONS --- */
-        .btn:hover {
-            transform: scale(1.02); /* Agrandissement léger */
-            filter: brightness(1.1); /* Plus lumineux */
-        }
-        
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
-        .btn-round { border-radius: 50px; margin-bottom: 8px; }
-        
-        .btn-primary { background-color: var(--neon-blue); color: #000; box-shadow: 0 0 15px rgba(0, 188, 212, 0.2); }
-        .btn-purple { background-color: var(--neon-purple); color: #fff; box-shadow: 0 0 15px rgba(213, 0, 249, 0.2);}
-        .btn-orange { background-color: var(--neon-orange); color: #000; box-shadow: 0 0 15px rgba(255, 61, 0, 0.2);}
-        .btn-success { background-color: var(--neon-green); color: #000; }
-        .btn-danger { background-color: var(--neon-pink); }
-        .btn-neutral { background-color: #333; color: #ccc; border: 1px solid #444; }
-        .btn-icon { width: 50px; flex-shrink: 0; padding: 0; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 0;}
-
-        /* --- COMPLICITÉ SPECIFIC --- */
-        .score-board { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 10px; }
-        .team-score-box { display: flex; flex-direction: column; align-items: center; flex: 1; transition: all 0.3s; }
-        .ts-name { font-size: 0.85rem; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
-        .ts-val { font-size: 1.8rem; font-weight: bold; }
-        .team-active .ts-name { color: var(--neon-green); }
-        .team-active .ts-val { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 230, 118, 0.4); transform: scale(1.1); }
-        .vs-divider { color: #444; font-weight: bold; padding: 0 10px; }
-        
-        .hold-zone { flex-grow: 1; max-height: 40vh; background: #111; border: 2px dashed #333; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; cursor: pointer; position: relative; touch-action: none; margin: 10px 0; transition: 0.2s;}
-        .hold-zone.holding { background: #000; border-color: #fff; box-shadow: inset 0 0 40px rgba(255,255,255, 0.1); }
-        #word-display { font-size: 2.2rem; font-weight: bold; color: white; display: none; text-transform: uppercase; text-align: center; padding: 10px; }
-        #hold-instruction { color: #666; font-size: 0.9rem; pointer-events: none; text-align: center; }
-
-        /* --- CONFIANCE SPECIFIC --- */
-        .confiance-result { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .big-result { font-size: 2.5rem; font-weight: bold; color: var(--neon-purple); text-shadow: 0 0 15px rgba(213, 0, 249, 0.5); margin: 20px 0; animation: popIn 0.3s ease-out; }
-        .order-list { list-style: none; padding: 0; width: 100%; text-align: left;}
-        .order-item { background: #1a1a1a; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 3px solid var(--neon-purple); font-size: 1.2rem; display: flex; align-items: center; animation: slideIn 0.3s ease-out forwards; opacity: 0; }
-        .order-rank { font-weight: bold; color: #666; width: 40px; }
-
-        /* --- UNDERCOVER SPECIFIC --- */
-        .role-counter { display: flex; justify-content: space-between; margin-bottom: 10px; background: #121212; padding: 10px; border-radius: 8px; border: 1px solid #333;}
-        .role-reveal-list { text-align: left; width: 100%; overflow-y: auto; max-height: 50vh; }
-        .role-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
-        .role-civil { color: var(--neon-blue); }
-        .role-under { color: var(--neon-orange); font-weight: bold; text-shadow: 0 0 5px rgba(255, 61, 0, 0.3);}
-        .role-white { color: #fff; font-style: italic; }
-
-        @keyframes popIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
-        @keyframes slideIn { from {transform: translateX(-20px); opacity: 0;} to {transform: translateX(0); opacity: 1;} }
-
-        /* --- UTILS --- */
-        .hidden { display: none !important; }
-        .credits { margin-top: auto; text-align: center; font-size: 0.75rem; color: #444; padding-bottom: 10px; line-height: 1.4; opacity: 0.6; }
-        .credits span { color: #888; font-weight: bold; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px);}
-        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 15px; text-align: center; width: 80%; border: 1px solid #444; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+/* End of file */
