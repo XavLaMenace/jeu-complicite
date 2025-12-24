@@ -1,9 +1,10 @@
 :root {
-    --bg-color: #0a0a0a;
-    --card-bg: rgba(20, 20, 20, 0.9);
+    --bg-color: #050505;
+    --card-bg: rgba(15, 15, 15, 0.95); /* Plus opaque pour le contraste */
     --neon-blue: #00bcd4;
     --neon-purple: #d500f9;
     --neon-orange: #ff3d00;
+    --neon-green: #00e676;
 }
 
 /* --- STRUCTURE --- */
@@ -13,117 +14,124 @@ body {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: #E0E0E0;
-    font-family: 'Segoe UI', sans-serif;
+    color: #FFFFFF;
+    font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     min-height: 100vh;
     display: flex;
     justify-content: center;
 }
 
-.container {
-    width: 90%;
-    max-width: 450px;
-    padding: 20px 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Permet de pousser les crédits en bas */
+/* Overlay beaucoup plus sombre pour faire ressortir les éléments */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85); 
+    z-index: -1;
 }
 
-/* --- INPUTS HARMONISÉS (FINI LES CASES BLANCHES) --- */
+.container {
+    width: 92%;
+    max-width: 450px;
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- INPUTS (ADIEU LA GROSSE BARRE BLANCHE) --- */
+.config-row {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 5px 15px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    transition: 0.3s;
+}
+
 input[type="text"], input[type="number"] {
     background: transparent !important;
     border: none !important;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 0 !important;
-    color: white !important;
-    padding: 12px 5px !important;
+    color: #fff !important;
+    padding: 15px 0 !important;
     font-size: 1.1rem !important;
-    transition: all 0.4s ease !important;
+    width: 100%;
+    outline: none !important;
+    font-weight: 500;
 }
 
-input[type="text"]:focus {
-    border-bottom: 2px solid var(--neon-blue) !important;
-    padding-left: 10px !important;
-    background: linear-gradient(to right, rgba(0, 188, 212, 0.05), transparent) !important;
+/* Effet quand on clique pour écrire un nom */
+.config-row:focus-within {
+    border-bottom: 2px solid var(--neon-blue);
+    background: rgba(0, 188, 212, 0.08);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Style spécifique pour le nombre d'objectifs/points */
-#win-score-input, #uc-count, #white-count {
-    text-align: center;
-    font-weight: bold;
-    color: var(--neon-blue) !important;
-}
-
-/* --- SECTION LE SAVIEZ-VOUS --- */
+/* --- LE SAVIEZ-VOUS (PLUS VISIBLE) --- */
 .did-you-know {
-    margin: 30px 0;
-    padding: 15px;
-    background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(213, 0, 249, 0.1));
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin: 40px 0;
+    padding: 25px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.2);
     text-align: center;
-    animation: fadeIn 1s ease;
 }
 
 .dyk-title {
-    font-size: 0.8rem;
+    font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     color: var(--neon-blue);
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 10px;
+    font-weight: 900;
 }
 
 .dyk-content {
-    font-size: 0.95rem;
-    font-style: italic;
-    color: #bbb;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #fff;
 }
 
-/* --- CRÉDITS (DISCRETS & BAS) --- */
+/* --- CRÉDITS (BIEN VISIBLES) --- */
 .credits {
-    margin-top: auto; /* Pousse vers le bas */
-    padding: 30px 0;
+    margin-top: auto;
+    padding: 40px 0;
     text-align: center;
-    font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    color: #eee;
+    background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+    width: 100%;
+    border-radius: 20px;
 }
 
-.credits span { color: rgba(255, 255, 255, 0.4); }
+.credits span { 
+    color: var(--neon-orange); 
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 61, 0, 0.3);
+}
 
-/* --- CARTES ET BOUTONS (RAPPEL) --- */
-.hub-grid { display: flex; flex-direction: column; gap: 15px; }
+/* --- CARTES & BOUTONS --- */
 .game-card { 
     background: var(--card-bg); 
-    border-radius: 18px; 
-    padding: 20px; 
-    display: flex; 
-    align-items: center; 
-    gap: 20px; 
-    border: 1px solid rgba(255,255,255,0.05);
-    transition: 0.3s;
+    border-radius: 20px; 
+    padding: 22px; 
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 15px;
 }
-.card-blue { border-left: 5px solid var(--neon-blue); }
-.card-orange { border-left: 5px solid var(--neon-orange); }
-.card-purple { border-left: 5px solid var(--neon-purple); }
 
 .btn {
-    padding: 16px;
-    border-radius: 14px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    text-transform: uppercase;
+    padding: 18px;
+    border-radius: 15px;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
-.btn-primary { background: var(--neon-blue); color: #000; }
-.btn-orange { background: var(--neon-orange); color: #000; }
-.btn-neutral { background: rgba(255,255,255,0.05); color: #888; border: 1px dashed #444; }
 
-.config-box { background: var(--card-bg); border-radius: 20px; padding: 20px; }
-.hidden { display: none !important; }
+.btn-primary { background: var(--neon-blue); color: #000; box-shadow: 0 5px 15px rgba(0, 188, 212, 0.4); }
+.btn-orange { background: var(--neon-orange); color: #000; box-shadow: 0 5px 15px rgba(255, 61, 0, 0.4); }
+.btn-danger { background: none; color: #ff4444; border: 1px solid #ff4444; width: 40px; height: 40px; }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.config-box { background: var(--card-bg); border-radius: 25px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); }
 /* End of file */
