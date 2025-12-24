@@ -7,177 +7,135 @@
     --neon-green: #00e676;
     --neon-purple: #d500f9;
     --neon-orange: #ff3d00;
-    --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* --- STRUCTURE GÉNÉRALE --- */
+/* --- STRUCTURE & ANIMATIONS DE BASE --- */
 body {
     background-color: var(--bg-color);
     background-image: url('assets/bg.png');
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     background-attachment: fixed;
     color: var(--text-main);
-    font-family: var(--font-family);
+    font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-x: hidden;
-    position: relative;
-    user-select: none;
-    -webkit-user-select: none;
+    justify-content: center;
 }
 
 body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
     z-index: -1;
-    pointer-events: none;
 }
 
 .container {
-    position: relative;
-    z-index: 1;
     width: 90%;
     max-width: 450px;
-    padding: 20px 0 40px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    box-sizing: border-box;
-    min-height: 100vh;
+    padding: 20px 0;
+    z-index: 1;
+    animation: fadeIn 0.6s ease-out;
 }
 
-/* --- NAVIGATION & TITRES --- */
-.top-nav { margin-bottom: 10px; }
-.btn-home { text-decoration: none; font-size: 1.5rem; transition: 0.3s; display: inline-block; }
-.btn-home:hover { transform: scale(1.2); }
-
-h1 { text-align: center; font-weight: 300; text-transform: uppercase; letter-spacing: 3px; margin: 5px 0; }
-.tagline { text-align: center; color: #888; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 15px; }
-
-/* --- CONFIGURATION & BOITES --- */
-.config-box {
-    background: var(--card-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 20px;
+/* --- DESIGN DES INPUTS (JOUEURS) --- */
+.config-row {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    margin-bottom: 12px;
+    animation: slideIn 0.3s ease-out both;
 }
-
-.config-row { display: flex; gap: 10px; width: 100%; align-items: center; }
 
 input[type="text"], input[type="number"] {
-    background: rgba(0, 0, 0, 0.4) !important;
-    border: 1px solid #333;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 10px;
+    padding: 14px;
+    border-radius: 12px;
     flex-grow: 1;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
-    transition: 0.3s;
-}
-input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 188, 212, 0.3); }
-
-/* --- SCOREBOARD (Complicité) --- */
-.score-board {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin: 10px 0;
 }
 
-.team-score-box {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 10px 15px;
-    border-radius: 12px;
-    text-align: center;
-    min-width: 80px;
-    border: 2px solid transparent;
-    transition: 0.3s;
-}
-
-.team-active {
-    border-color: var(--neon-green);
-    background: rgba(0, 230, 118, 0.1);
-    box-shadow: 0 0 15px rgba(0, 230, 118, 0.2);
-}
-
-.ts-name { font-size: 0.7rem; text-transform: uppercase; color: #888; }
-.ts-val { font-size: 1.5rem; font-weight: bold; color: white; }
-.vs-divider { font-style: italic; color: #444; font-weight: bold; }
-.turn-text { text-align: center; font-size: 1.1rem; margin-bottom: 10px; }
-
-/* --- BOUTONS --- */
-.btn {
-    padding: 15px 20px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-    transition: all 0.2s ease;
-    text-align: center;
-    display: inline-block;
-    width: 100%;
-}
-.btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
-.btn:active { transform: scale(0.95); }
-
-.btn-primary { background: var(--neon-blue); color: #000; box-shadow: 0 0 15px rgba(0, 188, 212, 0.3); }
-.btn-success { background: var(--neon-green); color: #000; }
-.btn-danger { background: var(--neon-orange); color: #000; }
-.btn-neutral { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); }
-.btn-round { border-radius: 30px; margin-bottom: 8px; }
-
-/* --- ZONE DE MAINTIEN (HOLD) --- */
-.hold-zone {
-    background: rgba(255, 255, 255, 0.03);
-    border: 2px dashed #444;
-    border-radius: 20px;
-    padding: 40px 20px;
-    text-align: center;
-    cursor: pointer;
-    margin: 15px 0;
-}
-.hold-zone.holding {
+input[type="text"]:focus {
+    background: rgba(255, 255, 255, 0.07) !important;
     border-color: var(--neon-blue);
-    background: rgba(0, 188, 212, 0.1);
-    border-style: solid;
-}
-#word-display { font-size: 2rem; font-weight: 900; color: white; display: none; }
-
-/* --- MODALES --- */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-.modal-content {
-    background: #111;
-    border: 1px solid #333;
-    padding: 30px;
-    border-radius: 25px;
-    text-align: center;
-    width: 85%;
-    max-width: 350px;
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.2), inset 0 0 5px rgba(0, 188, 212, 0.1);
+    transform: translateX(5px);
 }
 
-/* --- UTILS --- */
+/* --- BOUTONS STYLISÉS --- */
+.btn {
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet de brillance au survol */
+.btn::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg);
+    transition: 0.5s;
+}
+
+.btn:hover::after { left: 120%; }
+
+.btn-primary { background: var(--neon-blue); color: #000; box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3); }
+.btn-orange { background: var(--neon-orange); color: #000; box-shadow: 0 4px 15px rgba(255, 61, 0, 0.3); }
+.btn-purple { background: var(--neon-purple); color: #000; box-shadow: 0 4px 15px rgba(213, 0, 249, 0.3); }
+.btn-neutral { background: rgba(255, 255, 255, 0.05); color: white; border: 1px dashed rgba(255,255,255,0.2); }
+
+/* Bouton supprimer (X) */
+.btn-danger {
+    background: rgba(255, 61, 0, 0.1) !important;
+    color: var(--neon-orange);
+    border: 1px solid var(--neon-orange);
+    width: 45px;
+    height: 48px;
+    padding: 0;
+    border-radius: 10px;
+}
+
+/* Animation de pulsation pour le bouton principal de lancement */
+.pulse-btn {
+    animation: pulse 2s infinite;
+}
+
+/* --- KEYFRAMES --- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 188, 212, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 188, 212, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 188, 212, 0); }
+}
+
+/* --- GARDER LE RESTE DU STYLE (MODALES, SCOREBOARD, ETC) --- */
+.config-box { background: var(--card-bg); border-radius: 24px; padding: 25px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .hidden { display: none !important; }
+.hub-grid { display: flex; flex-direction: column; gap: 15px; }
+.game-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px; display: flex; align-items: center; gap: 20px; text-decoration: none; transition: 0.3s; }
+.card-blue { border-left: 5px solid var(--neon-blue); }
+.card-orange { border-left: 5px solid var(--neon-orange); }
+.card-purple { border-left: 5px solid var(--neon-purple); }
 /* End of file */
