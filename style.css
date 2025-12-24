@@ -1,6 +1,6 @@
 :root {
     --bg-color: #0a0a0a;
-    --card-bg: #151515;
+    --card-bg: rgba(21, 21, 21, 0.85); /* Légère transparence pour le style */
     --text-main: #E0E0E0;
     --neon-blue: #00bcd4;
     --neon-pink: #ff4081;
@@ -12,10 +12,7 @@
 
 /* --- BACKGROUND IMAGE + OVERLAY --- */
 body {
-    /* fallback color if image does not load */
     background-color: var(--bg-color);
-
-    /* background image (relative to index.html) */
     background-image: url('assets/bg.png');
     background-size: cover;
     background-position: center;
@@ -29,31 +26,34 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden; /* Permet le scroll vertical si besoin mais bloque l'horizontal */
     user-select: none;
     -webkit-user-select: none;
+    
+    /* On prépare le contexte pour l'overlay */
+    position: relative;
 }
 
-/* overlay to improve text readability */
+/* L'overlay est maintenant derrière le contenu (z-index: -1) */
 body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.55); /* Un peu plus sombre pour faire ressortir le néon */
     pointer-events: none;
-    z-index: 0;
+    z-index: -1; 
 }
 
-/* ensure the container sits above the overlay */
+/* --- CONTAINER --- */
 .container {
     position: relative;
-    z-index: 1;
+    z-index: 1; /* S'assure d'être au-dessus de l'overlay */
     width: 90%;
     max-width: 450px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    height: 100%;
+    min-height: 100vh;
     padding: 20px 0;
     box-sizing: border-box;
 }
@@ -69,14 +69,13 @@ body::after {
     text-decoration: none;
     background: none;
     border: none;
-    color: #666;
+    color: #888;
     font-size: 1.5rem;
     cursor: pointer;
     padding: 10px;
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
 }
-.btn-home:hover { transform: scale(1.2); color: white; }
-.btn-home:active { transform: scale(0.9); }
+.btn-home:hover { transform: scale(1.2); color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
 
 /* --- TYPOGRAPHY --- */
 h1 {
@@ -84,18 +83,16 @@ h1 {
     font-weight: 300;
     text-transform: uppercase;
     letter-spacing: 3px;
-    margin: 0 0 5px 0;
+    margin: 0;
 }
 
 .hub-title {
     font-size: 2.5rem;
     color: white;
     text-shadow:
-        0 0 10px rgba(0, 188, 212, 0.5),
-        0 0 20px rgba(0, 188, 212, 0.3),
-        0 0 40px rgba(0, 188, 212, 0.1);
+        0 0 10px rgba(0, 188, 212, 0.8),
+        0 0 20px rgba(0, 188, 212, 0.4);
     margin-top: 40px;
-    margin-bottom: 0;
 }
 
 .tagline {
@@ -110,6 +107,7 @@ h1 {
     border-bottom: 1px solid #333;
     display: inline-block;
     padding-bottom: 10px;
+    width: 100%;
 }
 
 /* --- MENU HUB (Cartes stylées) --- */
@@ -122,57 +120,109 @@ h1 {
 }
 
 .game-card {
-    background: linear-gradient(145deg, #1a1a1a, #111);
-    border: 1px solid #222;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px); /* Effet flou derrière la carte */
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
     padding: 25px 20px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
-/* --- GAME-CARD CONTENT --- */
+.game-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-blue);
+}
+
 .game-card-icon {
     font-size: 2rem;
     margin-bottom: 10px;
+    display: block;
 }
-.game-card-text h3 { margin: 0 0 5px 0; }
+
+.game-card-text h3 { margin: 0 0 5px 0; color: white; }
 .game-card-text p { margin: 0; color: #bbb; font-size: 0.9rem; }
 
-/* Button styles */
+/* --- BUTTONS WITH NEON GLOW --- */
 .btn {
     padding: 10px 15px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
-.btn-neutral { background: #222; color: #ddd; }
-.btn-primary { background: var(--neon-blue); color: #000; }
-.btn-orange { background: var(--neon-orange); color: #000; }
-.btn-purple { background: var(--neon-purple); color: #000; }
-.btn-success { background: #00e676; color: #000; }
-.btn-danger { background: #ff3d00; color: #000; }
-.btn-round { border-radius: 999px; padding: 12px 18px; }
 
-/* Hold zone */
+.btn:active { transform: scale(0.95); }
+
+.btn-primary { 
+    background: var(--neon-blue); 
+    color: #000; 
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.4); 
+}
+.btn-orange { 
+    background: var(--neon-orange); 
+    color: #000; 
+    box-shadow: 0 0 15px rgba(255, 61, 0, 0.4); 
+}
+.btn-purple { 
+    background: var(--neon-purple); 
+    color: #000; 
+    box-shadow: 0 0 15px rgba(213, 0, 249, 0.4); 
+}
+.btn-success { 
+    background: var(--neon-green); 
+    color: #000; 
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.4); 
+}
+
+.btn-neutral { background: #222; color: #ddd; }
+.btn-round { border-radius: 999px; padding: 12px 22px; }
+
+/* --- INTERACTIVE ZONES --- */
 .hold-zone {
-    background: rgba(255,255,255,0.02);
-    border: 1px dashed #333;
+    background: rgba(255,255,255,0.05);
+    border: 1px dashed #444;
     border-radius: 12px;
-    padding: 15px;
+    padding: 20px;
     text-align: center;
 }
-#word-display, #uc-word-display { font-size: 1.4rem; font-weight: 700; }
+#word-display, #uc-word-display { 
+    font-size: 1.6rem; 
+    font-weight: 700; 
+    color: white;
+    text-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
 
 /* Modal overlay */
-.modal-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 20; }
-.modal-content { background: linear-gradient(180deg, #111, #0f0f0f); padding: 20px; border-radius: 12px; border: 1px solid #222; }
+.modal-overlay { 
+    position: fixed; 
+    inset: 0; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    z-index: 100; 
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+}
+.modal-content { 
+    background: #111; 
+    padding: 30px; 
+    border-radius: 16px; 
+    border: 1px solid var(--neon-blue); 
+    box-shadow: 0 0 30px rgba(0, 188, 212, 0.2);
+}
 .hidden { display: none; }
 
 /* Credits */
-.credits { color: #999; font-size: 0.8rem; text-align: center; margin-top: auto; }
+.credits { color: #666; font-size: 0.75rem; text-align: center; margin-top: auto; padding-bottom: 20px; }
 
 /* Responsive tweaks */
 @media (max-width: 480px) {
     .hub-title { font-size: 2rem; }
-    .container { width: 95%; }
+    .container { width: 92%; }
+    body { overflow-y: auto; height: auto; } /* Permet le défilement sur mobile */
 }
-
 /* End of file */
