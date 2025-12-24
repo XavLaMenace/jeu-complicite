@@ -1,141 +1,129 @@
 :root {
     --bg-color: #0a0a0a;
-    --card-bg: rgba(20, 20, 20, 0.85);
-    --text-main: #E0E0E0;
+    --card-bg: rgba(20, 20, 20, 0.9);
     --neon-blue: #00bcd4;
-    --neon-pink: #ff4081;
-    --neon-green: #00e676;
     --neon-purple: #d500f9;
     --neon-orange: #ff3d00;
 }
 
-/* --- STRUCTURE & ANIMATIONS DE BASE --- */
+/* --- STRUCTURE --- */
 body {
     background-color: var(--bg-color);
     background-image: url('assets/bg.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: var(--text-main);
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: #E0E0E0;
+    font-family: 'Segoe UI', sans-serif;
     margin: 0;
     min-height: 100vh;
     display: flex;
     justify-content: center;
 }
 
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
-    z-index: -1;
-}
-
 .container {
     width: 90%;
     max-width: 450px;
     padding: 20px 0;
-    z-index: 1;
-    animation: fadeIn 0.6s ease-out;
-}
-
-/* --- DESIGN DES INPUTS (JOUEURS) --- */
-.config-row {
     display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
-    animation: slideIn 0.3s ease-out both;
+    flex-direction: column;
+    min-height: 100vh; /* Permet de pousser les crédits en bas */
 }
 
+/* --- INPUTS HARMONISÉS (FINI LES CASES BLANCHES) --- */
 input[type="text"], input[type="number"] {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 14px;
-    border-radius: 12px;
-    flex-grow: 1;
-    font-size: 1rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    outline: none;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0 !important;
+    color: white !important;
+    padding: 12px 5px !important;
+    font-size: 1.1rem !important;
+    transition: all 0.4s ease !important;
 }
 
 input[type="text"]:focus {
-    background: rgba(255, 255, 255, 0.07) !important;
-    border-color: var(--neon-blue);
-    box-shadow: 0 0 15px rgba(0, 188, 212, 0.2), inset 0 0 5px rgba(0, 188, 212, 0.1);
-    transform: translateX(5px);
+    border-bottom: 2px solid var(--neon-blue) !important;
+    padding-left: 10px !important;
+    background: linear-gradient(to right, rgba(0, 188, 212, 0.05), transparent) !important;
 }
 
-/* --- BOUTONS STYLISÉS --- */
+/* Style spécifique pour le nombre d'objectifs/points */
+#win-score-input, #uc-count, #white-count {
+    text-align: center;
+    font-weight: bold;
+    color: var(--neon-blue) !important;
+}
+
+/* --- SECTION LE SAVIEZ-VOUS --- */
+.did-you-know {
+    margin: 30px 0;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(213, 0, 249, 0.1));
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+    animation: fadeIn 1s ease;
+}
+
+.dyk-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--neon-blue);
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.dyk-content {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: #bbb;
+}
+
+/* --- CRÉDITS (DISCRETS & BAS) --- */
+.credits {
+    margin-top: auto; /* Pousse vers le bas */
+    padding: 30px 0;
+    text-align: center;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.credits span { color: rgba(255, 255, 255, 0.4); }
+
+/* --- CARTES ET BOUTONS (RAPPEL) --- */
+.hub-grid { display: flex; flex-direction: column; gap: 15px; }
+.game-card { 
+    background: var(--card-bg); 
+    border-radius: 18px; 
+    padding: 20px; 
+    display: flex; 
+    align-items: center; 
+    gap: 20px; 
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: 0.3s;
+}
+.card-blue { border-left: 5px solid var(--neon-blue); }
+.card-orange { border-left: 5px solid var(--neon-orange); }
+.card-purple { border-left: 5px solid var(--neon-purple); }
+
 .btn {
     padding: 16px;
     border-radius: 14px;
     border: none;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
+    transition: 0.3s;
+    text-transform: uppercase;
 }
+.btn-primary { background: var(--neon-blue); color: #000; }
+.btn-orange { background: var(--neon-orange); color: #000; }
+.btn-neutral { background: rgba(255,255,255,0.05); color: #888; border: 1px dashed #444; }
 
-/* Effet de brillance au survol */
-.btn::after {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-    transform: rotate(45deg);
-    transition: 0.5s;
-}
-
-.btn:hover::after { left: 120%; }
-
-.btn-primary { background: var(--neon-blue); color: #000; box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3); }
-.btn-orange { background: var(--neon-orange); color: #000; box-shadow: 0 4px 15px rgba(255, 61, 0, 0.3); }
-.btn-purple { background: var(--neon-purple); color: #000; box-shadow: 0 4px 15px rgba(213, 0, 249, 0.3); }
-.btn-neutral { background: rgba(255, 255, 255, 0.05); color: white; border: 1px dashed rgba(255,255,255,0.2); }
-
-/* Bouton supprimer (X) */
-.btn-danger {
-    background: rgba(255, 61, 0, 0.1) !important;
-    color: var(--neon-orange);
-    border: 1px solid var(--neon-orange);
-    width: 45px;
-    height: 48px;
-    padding: 0;
-    border-radius: 10px;
-}
-
-/* Animation de pulsation pour le bouton principal de lancement */
-.pulse-btn {
-    animation: pulse 2s infinite;
-}
-
-/* --- KEYFRAMES --- */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(0, 188, 212, 0.4); }
-    70% { box-shadow: 0 0 0 15px rgba(0, 188, 212, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(0, 188, 212, 0); }
-}
-
-/* --- GARDER LE RESTE DU STYLE (MODALES, SCOREBOARD, ETC) --- */
-.config-box { background: var(--card-bg); border-radius: 24px; padding: 25px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.config-box { background: var(--card-bg); border-radius: 20px; padding: 20px; }
 .hidden { display: none !important; }
-.hub-grid { display: flex; flex-direction: column; gap: 15px; }
-.game-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px; display: flex; align-items: center; gap: 20px; text-decoration: none; transition: 0.3s; }
-.card-blue { border-left: 5px solid var(--neon-blue); }
-.card-orange { border-left: 5px solid var(--neon-orange); }
-.card-purple { border-left: 5px solid var(--neon-purple); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 /* End of file */
