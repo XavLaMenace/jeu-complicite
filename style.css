@@ -1,4 +1,4 @@
-/* --- VARIABLES ET RESET --- */
+/* --- CONFIGURATION GLOBALE ET VARIABLES --- */
 :root {
     --bg-color: #050505;
     --card-bg: rgba(20, 20, 20, 0.95);
@@ -7,6 +7,7 @@
     --neon-orange: #ff3d00;
     --neon-green: #00e676;
     --neon-red: #ff1744;
+    --neon-pink: #f50057;
 }
 
 * { 
@@ -21,24 +22,24 @@ body {
     background-position: center;
     background-attachment: fixed;
     color: #ffffff;
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     height: 100vh;
     display: flex;
     justify-content: center;
-    overflow: hidden; /* Tout sur une page PC */
+    overflow: hidden;
 }
 
 body::after {
     content: "";
     position: fixed; inset: 0;
-    background: rgba(0, 0, 0, 0.65); 
+    background: rgba(0, 0, 0, 0.7); 
     z-index: -1;
 }
 
 .container {
     width: 95%;
-    max-width: 550px;
+    max-width: 500px;
     height: 100vh;
     padding: 20px;
     display: flex;
@@ -47,7 +48,7 @@ body::after {
     z-index: 1;
 }
 
-/* --- HUB ACCUEIL (BOUTONS MASSIFS) --- */
+/* --- HUB ACCUEIL --- */
 .hub-title { font-size: 2.2rem; font-weight: 900; text-align: center; margin: 0; letter-spacing: 1px; }
 .tagline { font-size: 0.8rem; text-align: center; color: #888; margin-bottom: 20px; text-transform: uppercase; }
 
@@ -75,7 +76,9 @@ body::after {
 .card-orange { border-left: 10px solid var(--neon-orange); }
 .card-purple { border-left: 10px solid var(--neon-purple); }
 
-/* --- INPUTS (ANTI-BLANC & AUTOFILL) --- */
+/* --- INPUTS : ÉRADICATION DU BLANC --- */
+.config-box { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
+
 .config-row {
     display: flex;
     align-items: center;
@@ -103,13 +106,8 @@ input:-webkit-autofill {
     transition: background-color 5000s ease-in-out 0s;
 }
 
-/* --- COMPLICITÉ : LES BELLES CASES & MOT CACHÉ --- */
-#scoreboard {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin: 15px 0;
-}
+/* --- COMPLICITÉ : SCORES ET MOT --- */
+#scoreboard { display: flex; justify-content: center; gap: 15px; margin: 15px 0; }
 
 .team-score-box {
     background: rgba(255, 255, 255, 0.05);
@@ -125,6 +123,7 @@ input:-webkit-autofill {
     border-color: var(--neon-green) !important;
     background: rgba(0, 230, 118, 0.1) !important;
     transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.2);
 }
 
 .ts-val { font-size: 2.5rem; font-weight: 900; display: block; line-height: 1; }
@@ -133,9 +132,9 @@ input:-webkit-autofill {
 .word-display {
     font-size: 2.8rem; font-weight: 900; text-align: center;
     margin: 25px 0; color: var(--neon-blue);
-    opacity: 0; transform: scale(0.9); transition: 0.2s; /* Caché par défaut */
+    opacity: 0; visibility: hidden; transform: scale(0.9); transition: 0.2s ease;
 }
-.word-display.visible { opacity: 1; transform: scale(1); }
+.word-display.visible { opacity: 1; visibility: visible; transform: scale(1); }
 
 .hold-zone {
     background: rgba(255, 255, 255, 0.05);
@@ -145,25 +144,30 @@ input:-webkit-autofill {
     text-align: center;
     cursor: pointer;
     user-select: none;
+    transition: 0.3s;
 }
 .hold-zone.active { border-style: solid; border-color: var(--neon-blue); background: rgba(0, 188, 212, 0.1); }
 
-/* --- BOUTONS --- */
+/* --- BOUTONS ET NAVIGATION --- */
 .game-controls { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+
 .btn {
     padding: 16px; border-radius: 14px; border: none; font-weight: 900;
     text-transform: uppercase; cursor: pointer; font-size: 1rem; transition: 0.2s;
 }
 .btn-primary { background: var(--neon-blue); color: #000; }
-.btn-found { background: var(--neon-green); color: #000; }
-.btn-intercept { background: var(--neon-red); color: #fff; }
+.btn-found, .btn-success { background: var(--neon-green); color: #000; }
+.btn-intercept, .btn-danger { background: var(--neon-red); color: #fff; }
 .btn-neutral { background: rgba(255,255,255,0.1); color: #fff; }
 
-/* --- HISTOIRE & SAVIEZ-VOUS --- */
+.top-nav { padding: 10px 0; display: flex; justify-content: flex-start; }
+.btn-home { text-decoration: none; font-size: 1.5rem; }
+
+/* --- SECTIONS ACCUEIL --- */
 .icam-history {
     margin-top: 15px; padding: 15px; border-radius: 15px;
     background: rgba(213, 0, 249, 0.08); border: 1px solid var(--neon-purple);
-    cursor: pointer; text-align: center;
+    cursor: pointer; text-align: center; transition: 0.3s;
 }
 .did-you-know {
     margin: 15px 0; padding: 15px; border-radius: 15px;
@@ -171,7 +175,7 @@ input:-webkit-autofill {
     text-align: center;
 }
 
-/* --- MODALE & CRÉDITS --- */
+/* --- MODALES --- */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95);
     display: flex; align-items: center; justify-content: center; z-index: 9999;
@@ -181,6 +185,7 @@ input:-webkit-autofill {
     border: 1px solid #333; text-align: center;
 }
 
+/* --- CRÉDITS --- */
 .credits-corner {
     position: fixed; bottom: 15px; right: 15px;
     font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); text-align: right;
