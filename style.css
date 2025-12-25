@@ -1,4 +1,4 @@
-/* --- CONFIGURATION GLOBALE --- */
+/* --- VARIABLES ET RESET --- */
 :root {
     --bg-color: #050505;
     --card-bg: rgba(20, 20, 20, 0.95);
@@ -21,25 +21,24 @@ body {
     background-position: center;
     background-attachment: fixed;
     color: #ffffff;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     height: 100vh;
     display: flex;
     justify-content: center;
-    overflow: hidden; /* Fix pour garder tout sur un écran PC */
+    overflow: hidden; /* Tout sur une page PC */
 }
 
 body::after {
     content: "";
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(0, 0, 0, 0.65); 
     z-index: -1;
 }
 
 .container {
     width: 95%;
-    max-width: 500px;
+    max-width: 550px;
     height: 100vh;
     padding: 20px;
     display: flex;
@@ -48,8 +47,8 @@ body::after {
     z-index: 1;
 }
 
-/* --- HUB ACCUEIL --- */
-.hub-title { font-size: 2.2rem; font-weight: 900; margin: 0; text-align: center; letter-spacing: 1px; }
+/* --- HUB ACCUEIL (BOUTONS MASSIFS) --- */
+.hub-title { font-size: 2.2rem; font-weight: 900; text-align: center; margin: 0; letter-spacing: 1px; }
 .tagline { font-size: 0.8rem; text-align: center; color: #888; margin-bottom: 20px; text-transform: uppercase; }
 
 .hub-grid { display: flex; flex-direction: column; gap: 15px; }
@@ -64,19 +63,19 @@ body::after {
     text-decoration: none;
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s;
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.game-card:hover { transform: scale(1.03); border-color: var(--neon-blue); background: rgba(30, 30, 30, 0.98); }
-.game-card-icon { font-size: 3rem; }
+.game-card:hover { transform: scale(1.03); border-color: var(--neon-blue); background: rgba(35, 35, 35, 0.98); }
+.game-card-icon { font-size: 3.2rem; }
 .game-card-text h3 { margin: 0; font-size: 1.6rem; }
-.game-card-text p { margin: 4px 0 0 0; color: #aaa; font-size: 0.95rem; }
+.game-card-text p { margin-top: 5px; color: #aaa; font-size: 0.95rem; }
 
-.card-blue { border-left: 8px solid var(--neon-blue); }
-.card-orange { border-left: 8px solid var(--neon-orange); }
-.card-purple { border-left: 8px solid var(--neon-purple); }
+.card-blue { border-left: 10px solid var(--neon-blue); }
+.card-orange { border-left: 10px solid var(--neon-orange); }
+.card-purple { border-left: 10px solid var(--neon-purple); }
 
-/* --- INPUTS : ÉRADICATION DU BLANC & AUTOFILL --- */
+/* --- INPUTS (ANTI-BLANC & AUTOFILL) --- */
 .config-row {
     display: flex;
     align-items: center;
@@ -85,12 +84,10 @@ body::after {
     padding: 0 15px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: 0.3s;
 }
 
 input[type="text"], input[type="number"], input {
-    appearance: none !important;
-    -webkit-appearance: none !important;
+    appearance: none !important; -webkit-appearance: none !important;
     background: transparent !important;
     border: none !important;
     color: white !important;
@@ -98,71 +95,83 @@ input[type="text"], input[type="number"], input {
     font-size: 1.1rem !important;
     width: 100%;
     outline: none !important;
-    box-shadow: none !important;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus {
+input:-webkit-autofill {
     -webkit-text-fill-color: white !important;
     -webkit-box-shadow: 0 0 0px 1000px #1a1a1a inset !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
-.config-row:focus-within { border-color: var(--neon-blue); background: rgba(0, 188, 212, 0.1) !important; }
-
-/* --- COMPLICITÉ : SCOREBOARD PRÉCIS --- */
+/* --- COMPLICITÉ : LES BELLES CASES & MOT CACHÉ --- */
 #scoreboard {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 15px;
     margin: 15px 0;
-    width: 100%;
 }
 
 .team-score-box {
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 15px;
-    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 18px;
+    padding: 15px 10px;
     text-align: center;
     flex: 1;
-    border: 2px solid rgba(255, 255, 255, 0.05);
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: 0.4s;
 }
 
 .team-active {
-    background: rgba(0, 230, 118, 0.12) !important;
     border-color: var(--neon-green) !important;
-    box-shadow: 0 0 15px rgba(0, 230, 118, 0.2);
+    background: rgba(0, 230, 118, 0.1) !important;
     transform: scale(1.05);
 }
 
-.ts-val { font-size: 2.2rem; font-weight: 900; display: block; }
-.ts-name { font-size: 0.8rem; color: #888; text-transform: uppercase; }
+.ts-val { font-size: 2.5rem; font-weight: 900; display: block; line-height: 1; }
+.ts-name { font-size: 0.75rem; color: #888; text-transform: uppercase; margin-top: 5px; }
 
-/* --- SECTIONS ACCUEIL --- */
-.icam-history {
-    margin-top: 15px;
-    padding: 15px;
-    background: rgba(213, 0, 249, 0.08);
-    border: 1px solid var(--neon-purple);
-    border-radius: 15px;
+.word-display {
+    font-size: 2.8rem; font-weight: 900; text-align: center;
+    margin: 25px 0; color: var(--neon-blue);
+    opacity: 0; transform: scale(0.9); transition: 0.2s; /* Caché par défaut */
+}
+.word-display.visible { opacity: 1; transform: scale(1); }
+
+.hold-zone {
+    background: rgba(255, 255, 255, 0.05);
+    border: 3px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 35px 20px;
+    text-align: center;
     cursor: pointer;
-    text-align: center;
-    transition: 0.3s;
+    user-select: none;
 }
-.icam-history:hover { background: rgba(213, 0, 249, 0.15); transform: translateY(-2px); }
+.hold-zone.active { border-style: solid; border-color: var(--neon-blue); background: rgba(0, 188, 212, 0.1); }
 
+/* --- BOUTONS --- */
+.game-controls { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+.btn {
+    padding: 16px; border-radius: 14px; border: none; font-weight: 900;
+    text-transform: uppercase; cursor: pointer; font-size: 1rem; transition: 0.2s;
+}
+.btn-primary { background: var(--neon-blue); color: #000; }
+.btn-found { background: var(--neon-green); color: #000; }
+.btn-intercept { background: var(--neon-red); color: #fff; }
+.btn-neutral { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* --- HISTOIRE & SAVIEZ-VOUS --- */
+.icam-history {
+    margin-top: 15px; padding: 15px; border-radius: 15px;
+    background: rgba(213, 0, 249, 0.08); border: 1px solid var(--neon-purple);
+    cursor: pointer; text-align: center;
+}
 .did-you-know {
-    margin: 15px 0;
-    padding: 15px;
-    background: rgba(0, 188, 212, 0.08);
-    border: 1px solid var(--neon-blue);
-    border-radius: 15px;
+    margin: 15px 0; padding: 15px; border-radius: 15px;
+    background: rgba(0, 188, 212, 0.08); border: 1px solid var(--neon-blue);
     text-align: center;
 }
 
-/* --- MODALE HISTOIRE --- */
+/* --- MODALE & CRÉDITS --- */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95);
     display: flex; align-items: center; justify-content: center; z-index: 9999;
@@ -172,24 +181,10 @@ input:-webkit-autofill:focus {
     border: 1px solid #333; text-align: center;
 }
 
-/* --- BOUTONS --- */
-.btn {
-    padding: 16px; border-radius: 14px; border: none; font-weight: 800;
-    text-transform: uppercase; cursor: pointer; width: 100%; transition: 0.2s;
-}
-.btn-primary { background: var(--neon-blue); color: #000; }
-.btn-orange { background: var(--neon-orange); color: #000; }
-.btn-intercept { 
-    background: transparent !important; border: 2px solid var(--neon-red) !important; 
-    color: var(--neon-red) !important; margin-top: 10px !important;
-}
-.btn-neutral { background: rgba(255,255,255,0.1); color: #fff; margin-top: 15px; }
-
-/* --- CRÉDITS (BAS DROITE) --- */
 .credits-corner {
     position: fixed; bottom: 15px; right: 15px;
-    font-size: 0.75rem; color: rgba(255, 255, 255, 0.4); text-align: right;
-    line-height: 1.3;
+    font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); text-align: right;
+    z-index: 10;
 }
 .credits-corner span { color: var(--neon-orange); font-weight: bold; }
 
