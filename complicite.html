@@ -2,64 +2,100 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complicité</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div style="padding: 10px 0;"><a href="index.html" style="text-decoration:none; font-size: 1.5rem;">🏠</a></div>
-        
         <div id="comp-setup">
-            <h1 style="color:var(--neon-blue); text-align:center;">Complicité</h1>
-            <div class="config-box">
-                <label>Objectif de points</label>
-                <div class="config-row"><input type="number" id="win-score-input" value="10"></div>
-                <label style="margin-top:15px; display:block;">Équipes</label>
-                <div id="teams-container"></div>
-                <button class="btn btn-neutral" onclick="addTeam()" style="margin-top:10px; border:1px dashed #555;">+ Ajouter Équipe</button>
-            </div>
-            <button class="btn btn-primary" onclick="startCompliciteGame()" style="margin-top:20px;">Lancer la partie</button>
+            <h1 style="text-align:center; color:var(--neon-blue)">Complicité</h1>
+            <div id="teams-container"></div>
+            <button class="btn btn-neutral" onclick="addTeam()" style="width:100%; margin-top:10px;">+ Ajouter une équipe</button>
+            <button class="btn btn-primary" onclick="startGame()" style="width:100%; margin-top:20px;">LANCER LE JEU</button>
         </div>
 
         <div id="comp-game" class="hidden">
             <div id="scoreboard"></div>
-            <div id="turn-indicator" style="text-align:center; margin-bottom:15px; font-weight:bold;"></div>
             <div id="word-to-guess" class="word-display">MOT</div>
-            <div id="hold-zone" class="hold-zone"><div id="hold-instruction">👆 MAINTIENS POUR VOIR</div></div>
+            <div id="hold-zone" class="hold-zone">MAINTIENS POUR VOIR LE MOT</div>
+            
             <div class="game-controls">
-                <button class="btn btn-found" onclick="roundEnd('win')">✅ Trouvé !</button>
-                <button class="btn btn-intercept" onclick="handleStealAttempt()">😈 Intercepté !</button>
-                <button class="btn btn-neutral" onclick="roundEnd('skip')">☠️ Raté / Tabou</button>
+                <button class="btn btn-found" onclick="scorePoint('win')">✅ Trouvé !</button>
+                <button class="btn btn-intercept" onclick="scorePoint('steal')">😈 Intercepté !</button>
+                <button class="btn btn-neutral" onclick="scorePoint('skip')">Passer / Raté</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Logique de jeu identique à ton code mais avec le fix de maintien ci-dessous :
-        const holdZone = document.getElementById('hold-zone');
-        const wordToGuess = document.getElementById('word-to-guess');
-        const holdInst = document.getElementById('hold-instruction');
+        const wordsList = ["Pizza", "Chaussette", "Batman", "Zidane", "Moustique", "Licorne", "Prison", "Sushi", "Camping"];
+        let teams = [{name: "Équipe 1", score: 0}, {name: "Équipe 2", score: 0}];
+        let currentIdx = 0;
 
-        const show = (e) => {
-            if(e.cancelable) e.preventDefault();
-            wordToGuess.classList.add('visible');
-            holdZone.classList.add('active');
-            holdInst.style.opacity = "0";
-        };
-        const hide = () => {
-            wordToGuess.classList.remove('visible');
-            holdZone.classList.remove('active');
-            holdInst.style.opacity = "1";
-        };
+        // 1. Ajouter/Afficher les équipes
+        function renderTeams() {
+            const container = document.getElementById('teams-container');
+            container.innerHTML = "";
+            teams.forEach((t, i) => {
+                container.innerHTML += `<div class="config-row"><input type="text" value="${t.name}" onchange="teams[${i}].name=this.value"></div>`;
+            });
+        }
+
+        function addTeam() {
+            teams.push({name: `Équipe ${teams.length + 1}`, score: 0});
+            renderTeams();
+        }
+
+        // 2. Lancer le jeu
+        function startGame() {
+            document.getElementById('comp-setup').classList.add('hidden');
+            document.getElementById('comp-game').classList.remove('hidden');
+            nextTurn();
+        }
+
+        function nextTurn() {
+            const word = wordsList[Math.floor(Math.random() * wordsList.length)];
+            document.getElementById('word-to-guess').innerText = word;
+            updateUI();
+        }
+
+        function updateUI() {
+            const sb = document.getElementById('scoreboard');
+            sb.innerHTML = "";
+            teams.forEach((t, i) => {
+                sb.innerHTML += `
+                    <div class="team-score-box ${i === currentIdx ? 'team-active' : ''}">
+                        <span class="ts-val">${t.score}</span>
+                        <span class="ts-name">${t.name}</span>
+                    </div>`;
+            });
+        }
+
+        // 3. Marquer des points
+        function scorePoint(type) {
+            if (type === 'win') teams[currentIdx].score++;
+            if (type === 'steal') {
+                let next = (currentIdx + 1) % teams.length;
+                teams[next].score++;
+            }
+            currentIdx = (currentIdx + 1) % teams.length;
+            nextTurn();
+        }
+
+        // 4. LE MAINTIEN (FIXÉ)
+        const holdZone = document.getElementById('hold-zone');
+        const wordBox = document.getElementById('word-to-guess');
+
+        const show = (e) => { e.preventDefault(); wordBox.classList.add('visible'); holdZone.classList.add('active'); };
+        const hide = () => { wordBox.classList.remove('visible'); holdZone.classList.remove('active'); };
 
         holdZone.addEventListener('mousedown', show);
         holdZone.addEventListener('mouseup', hide);
-        holdZone.addEventListener('mouseleave', hide);
-        holdZone.addEventListener('touchstart', show, {passive:false});
+        holdZone.addEventListener('touchstart', show);
         holdZone.addEventListener('touchend', hide);
-        
-        // ... (Insérer ici tes fonctions startCompliciteGame, roundEnd, etc.)
+
+        renderTeams();
     </script>
 </body>
 </html>
