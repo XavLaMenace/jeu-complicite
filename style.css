@@ -1,6 +1,6 @@
 :root {
     --bg-color: #050505;
-    --card-bg: rgba(20, 20, 20, 0.9);
+    --card-bg: rgba(15, 15, 15, 0.95);
     --neon-blue: #00bcd4;
     --neon-purple: #d500f9;
     --neon-orange: #ff3d00;
@@ -16,20 +16,19 @@ body {
     background-position: center;
     background-attachment: fixed;
     color: #fff;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     height: 100vh;
     display: flex;
     justify-content: center;
-    overflow: hidden;
+    overflow: hidden; /* Tout sur une page */
 }
 
-/* Fond plus transparent pour voir l'image derrière */
 body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6); 
+    background: rgba(0, 0, 0, 0.65); /* On voit bien le fond */
     z-index: -1;
 }
 
@@ -37,72 +36,97 @@ body::after {
     width: 95%;
     max-width: 500px;
     height: 100vh;
-    padding: 15px;
+    padding: 10px 20px;
     display: flex;
     flex-direction: column;
 }
 
-/* --- ACCUEIL : BOUTONS PLUS GROS --- */
+/* --- ACCUEIL : BOUTONS MASSIFS --- */
 .hub-grid { display: flex; flex-direction: column; gap: 15px; }
 
 .game-card {
     background: var(--card-bg);
     border-radius: 20px;
-    padding: 30px 25px; /* Grossi ici */
+    padding: 25px 30px;
     display: flex;
     align-items: center;
     gap: 20px;
     text-decoration: none;
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: 0.3s;
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.game-card:hover { transform: scale(1.03); background: rgba(40, 40, 40, 0.95); }
+.game-card:hover { transform: scale(1.03); background: rgba(40,40,40,0.9); border-color: rgba(255,255,255,0.3); }
 
-.game-card-icon { font-size: 3rem; } /* Icone plus grosse */
-.game-card-text h3 { margin: 0; font-size: 1.6rem; } /* Titre plus gros */
-.game-card-text p { margin-top: 5px; font-size: 1rem; color: #ccc; }
+.game-card-icon { font-size: 3rem; }
+.game-card-text h3 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
+.game-card-text p { margin: 5px 0 0 0; font-size: 0.9rem; color: #aaa; }
 
-/* --- INPUTS DES JEUX (FINI LE BLANC) --- */
+.card-blue { border-left: 8px solid var(--neon-blue); }
+.card-orange { border-left: 8px solid var(--neon-orange); }
+.card-purple { border-left: 8px solid var(--neon-purple); }
+
+/* --- INPUTS ANTI-TACHES BLANCHES --- */
 .config-row {
     display: flex;
     align-items: center;
-    background: rgba(40, 40, 40, 0.6); /* Gris foncé transparent */
+    background: rgba(255, 255, 255, 0.04) !important;
     margin-bottom: 10px;
-    padding: 5px 15px;
+    padding: 0 15px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: 0.3s;
 }
 
-input[type="text"], input[type="number"] {
+input[type="text"], input[type="number"], input {
+    -webkit-appearance: none;
+    appearance: none;
     background: transparent !important;
+    background-color: transparent !important;
     border: none !important;
     color: white !important;
-    padding: 12px 0 !important;
+    padding: 15px 0 !important;
     font-size: 1.1rem !important;
     width: 100%;
     outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Fix pour l'autofill (saisie automatique) qui crée la tache blanche */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: white !important;
+    -webkit-box-shadow: 0 0 0px 1000px #1a1a1a inset !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 .config-row:focus-within {
     border-color: var(--neon-blue);
-    background: rgba(0, 188, 212, 0.15);
-    box-shadow: 0 0 15px rgba(0, 188, 212, 0.2);
+    background: rgba(0, 188, 212, 0.1) !important;
 }
 
-/* --- LE SAVIEZ-VOUS --- */
+/* --- SECTIONS SPÉCIFIQUES --- */
 .did-you-know {
-    margin: 25px 0;
+    margin: 20px 0;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 188, 212, 0.05);
     border-radius: 15px;
-    border-left: 5px solid var(--neon-blue);
+    border: 1px solid rgba(0, 188, 212, 0.3);
     text-align: center;
 }
-.dyk-title { font-weight: 900; color: var(--neon-blue); margin-bottom: 5px; }
-.dyk-content { font-size: 1.1rem; color: #eee; }
+.dyk-title { font-weight: 900; color: var(--neon-blue); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 5px; }
+.dyk-content { font-size: 1.1rem; color: #fff; font-weight: 500; }
+
+.credits {
+    margin-top: auto;
+    padding: 15px 0;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #fff;
+    line-height: 1.4;
+}
+.credits span { color: var(--neon-orange); font-weight: bold; }
 
 /* --- BOUTONS --- */
 .btn {
@@ -113,27 +137,11 @@ input[type="text"], input[type="number"] {
     text-transform: uppercase;
     cursor: pointer;
     width: 100%;
-    margin-top: 10px;
+    transition: 0.2s;
 }
 .btn-primary { background: var(--neon-blue); color: #000; }
 .btn-orange { background: var(--neon-orange); color: #000; }
-.btn-neutral { background: rgba(255,255,255,0.1); color: #fff; }
-.btn-danger { background: rgba(255, 0, 0, 0.2); color: #ff4444; border: 1px solid #ff4444; width: 45px; height: 45px; }
+.btn-danger { background: rgba(255,0,0,0.1); color: #ff4444; border: 1px solid #ff4444; width: 42px; height: 42px; padding: 0; }
 
-/* --- CREDITS --- */
-.credits {
-    margin-top: auto;
-    padding: 25px 0;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-}
-.credits span { color: var(--neon-orange); text-shadow: 0 0 10px rgba(255, 61, 0, 0.5); }
-
-/* --- AUTRES --- */
 .config-box { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
 .hidden { display: none !important; }
-.card-blue { border-left: 8px solid var(--neon-blue); }
-.card-orange { border-left: 8px solid var(--neon-orange); }
-.card-purple { border-left: 8px solid var(--neon-purple); }
