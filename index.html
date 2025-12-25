@@ -16,7 +16,6 @@
         </div>
 
         <div class="hub-grid">
-            
             <a href="complicite.html" style="text-decoration:none;">
                 <div class="game-card card-blue">
                     <div class="game-card-icon">🤝</div>
@@ -46,16 +45,11 @@
                     </div>
                 </div>
             </a>
-
         </div>
 
-        <div class="icam-history">
+        <div class="icam-history" onclick="openHistory()">
             <div class="history-title">📜 L'Épopée ICAM</div>
-            <div class="history-content">
-                Fondée en 1898 à Lille par des industriels et des jésuites, l'Icam est devenue une école de référence. 
-                Des générations de "coiffeurs" ont forgé cet esprit unique, du Bar Toutatis aux moments de cohésion légendaires. 
-                Aujourd'hui, c'est ton tour de faire vivre l'histoire !
-            </div>
+            <div class="history-content-preview">Clique pour découvrir notre histoire...</div>
         </div>
 
         <div class="did-you-know">
@@ -63,13 +57,26 @@
             <div class="dyk-content">Oui je le sais</div>
         </div>
 
-        <div class="credits">
-            Fait par <span>@francois.grcia</span><br>
-            & <span>@xav_le_toums</span><br>
-            (anciennement xavier_le_vrai)
+        <div id="history-modal" class="modal-overlay hidden" onclick="closeHistory()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="color: var(--neon-purple); margin-top:0;">L'Histoire de l'ICAM</h2>
+                <div class="history-full-text">
+                    <p>Fondée en 1898 à Lille, l'Icam est née d'une volonté de former des ingénieurs techniquement compétents et humainement responsables.</p>
+                    <p>Le terme "Coiffeur" rappelle les liens forts qui unissent les promotions. Du Bar Toutatis à la Dolce V'Icam, chaque étudiant Icam contribue à cette épopée qui dure depuis plus de 125 ans.</p>
+                </div>
+                <button class="btn btn-neutral" onclick="closeHistory()">Fermer</button>
+            </div>
+        </div>
+
+        <div class="credits-corner">
+            Fait par <span>@francois.grcia</span><br>& <span>@xav_le_toums anciennement @xavier_le_vrai</span>
         </div>
         
     </div>
 
+    <script>
+        function openHistory() { document.getElementById('history-modal').classList.remove('hidden'); }
+        function closeHistory() { document.getElementById('history-modal').classList.add('hidden'); }
+    </script>
 </body>
 </html>
