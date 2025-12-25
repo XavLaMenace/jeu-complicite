@@ -2,100 +2,176 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complicité</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Complicité - ICAM Games</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
+        <div style="padding: 10px 0;"><a href="index.html" style="text-decoration:none; font-size: 1.5rem;">🏠</a></div>
+        
         <div id="comp-setup">
-            <h1 style="text-align:center; color:var(--neon-blue)">Complicité</h1>
-            <div id="teams-container"></div>
-            <button class="btn btn-neutral" onclick="addTeam()" style="width:100%; margin-top:10px;">+ Ajouter une équipe</button>
-            <button class="btn btn-primary" onclick="startGame()" style="width:100%; margin-top:20px;">LANCER LE JEU</button>
+            <h1 style="color:var(--neon-blue); text-align:center;">Complicité</h1>
+            <div class="config-box" style="background:rgba(20,20,20,0.8); padding:20px; border-radius:20px;">
+                <label>Objectif de points (0 = Infini)</label>
+                <div class="config-row">
+                    <input type="number" id="win-score-input" placeholder="Ex: 10" value="10">
+                </div>
+                
+                <label style="margin-top:15px; display:block;">Équipes</label>
+                <div id="teams-container"></div>
+                <button class="btn btn-neutral" onclick="addTeam()" style="width:100%; margin-top:10px; border:1px dashed #555;">+ Ajouter Équipe</button>
+            </div>
+            <button class="btn btn-primary" onclick="startCompliciteGame()" style="width:100%; margin-top:20px;">LANCER LA PARTIE</button>
         </div>
 
         <div id="comp-game" class="hidden">
             <div id="scoreboard"></div>
+            <div id="turn-indicator" style="text-align:center; margin-bottom:15px; font-weight:bold; color:var(--neon-blue);"></div>
+
             <div id="word-to-guess" class="word-display">MOT</div>
-            <div id="hold-zone" class="hold-zone">MAINTIENS POUR VOIR LE MOT</div>
-            
+
+            <div id="hold-zone" class="hold-zone">
+                <div id="hold-instruction">👆 MAINTIENS POUR VOIR</div>
+            </div>
+
             <div class="game-controls">
-                <button class="btn btn-found" onclick="scorePoint('win')">✅ Trouvé !</button>
-                <button class="btn btn-intercept" onclick="scorePoint('steal')">😈 Intercepté !</button>
-                <button class="btn btn-neutral" onclick="scorePoint('skip')">Passer / Raté</button>
+                <button class="btn btn-found" onclick="roundEnd('win')">✅ Trouvé !</button>
+                <button class="btn btn-intercept" onclick="handleStealAttempt()">😈 Intercepté !</button>
+                <button class="btn btn-neutral" onclick="roundEnd('skip')">☠️ Raté / Tabou</button>
             </div>
         </div>
     </div>
 
-    <script>
-        const wordsList = ["Pizza", "Chaussette", "Batman", "Zidane", "Moustique", "Licorne", "Prison", "Sushi", "Camping"];
-        let teams = [{name: "Équipe 1", score: 0}, {name: "Équipe 2", score: 0}];
-        let currentIdx = 0;
+    <div id="modal-victory" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h1 style="font-size:4rem; margin:0;">🏆</h1>
+            <h2 id="winner-name" style="color:var(--neon-green); font-size:2rem;">VICTOIRE</h2>
+            <p style="color:#aaa;">La partie est terminée !</p>
+            <button class="btn btn-primary" onclick="location.reload()" style="width:100%; margin-top:20px;">REJOUER</button>
+        </div>
+    </div>
 
-        // 1. Ajouter/Afficher les équipes
-        function renderTeams() {
+    <script>
+        // LISTE DE MOTS MASSIVE (Plus de 100 mots)
+        const baseWords = [
+            "Brosse à dents", "Micro-ondes", "Chaussette", "Télécommande", "Canapé", "Oreiller", "PQ", "Chargeur", "Camping", "Plage", "Prison", "Hôpital", "Ascenseur", "Pizza", "Raclette", "Sushi", "Ketchup", "Divorce", "Mariage", "Enterrement", "Harry Potter", "Batman", "Zidane", "Macron", "Pigeon", "Moustique", "Licorne", "Dinosaure", "Vomir", "Danser", "Pleurer", "Crier", "Iphone", "Lave-vaisselle", "Tondeuse", "Sèche-cheveux", "Grille-pain", "Machine à laver", "Frigo", "Coussin", "Tapis", "Rideau", "Clé", "Parapluie", "Sac à dos", "Valise", "Dentifrice", "Savon", "Shampoing", "Miroir", "Peigne", "Lunettes", "Montre", "Bague", "Collier", "Bracelet", "Boucle d'oreille", "Chaussure", "Botte", "Sandale", "Basket", "Talon haut", "Cravate", "Ceinture", "Chapeau", "Casquette", "Bonnet", "Écharpe", "Gants", "Maillot de bain", "Pyjama", "Robe", "Jupe", "Pantalon", "Short", "Chemise", "Pull", "Veste", "Manteau", "Costume", "Caleçon", "Culotte", "Soutien-gorge", "Collant", "Chaussette", "Mouchoir", "Serviette", "Gant de toilette", "Éponge", "Balai", "Aspirateur", "Fer à repasser", "Poêle", "Casserole", "Passoire", "Balance", "Mixeur", "Robot de cuisine", "Four", "Plaque de cuisson", "Hotte", "Cafetière", "Bouilloire", "Théière", "Verre", "Assiette", "Couverts", "Fourchette", "Couteau", "Cuillère", "Bouteille", "Canette", "Tire-bouchon", "Ouvre-boîte", "Planche à découper", "Ciseau", "Scotch", "Colle", "Stylo", "Crayon", "Gomme", "Règle", "Calculatrice", "Ordinateur", "Tablette", "Souris", "Clavier", "Écran", "Imprimante", "Casque", "Écouteurs", "Enceinte", "Téléphone", "Appareil photo", "Caméra", "Console de jeux", "Manette", "Livre", "Magazine", "Journal", "Cahier", "Classeur", "Enveloppe", "Timbre", "Carte postale", "Agenda", "Calendrier", "Dictionnaire", "Roman", "BD", "Manga", "Cinéma", "Théâtre", "Musée", "Concert", "Opéra", "Cirque", "Zoo", "Parc d'attraction", "Piscine", "Stade", "Gymnase", "Bibliothèque", "Mairie", "Banque", "Poste", "Gare", "Aéroport", "Hôtel", "Restaurant", "Bar", "Café", "Boulangerie", "Boucherie", "Supermarché", "Pharmacie", "Garage", "Station-service", "Parking", "Pont", "Tunnel", "Autoroute", "Route", "Rue", "Place", "Jardin", "Forêt", "Montagne", "Mer", "Océan", "Lac", "Rivière", "Cascade", "Désert", "Île", "Volcan", "Grotte", "Campagne", "Ferme", "Château", "Église", "Mosquée", "Temple", "Synagogue", "Cimetière", "Usine", "Mine", "Phare", "Moulin", "Barrage", "Port", "Bateau", "Avion", "Train", "Bus", "Tramway", "Métro", "Vélo", "Moto", "Voiture", "Camion", "Tracteur", "Fusée", "Soucoupe volante", "Hélicoptère", "Montgolfière", "Parachute", "Skateboard", "Rollers", "Trottinette", "Ski", "Surf", "Planche à voile", "Plongée", "Pêche", "Chasse", "Randonnée", "Escalade", "Camping", "Pique-nique", "Barbecue", "Feu de camp", "Étoile", "Lune", "Soleil", "Nuage", "Pluie", "Neige", "Orage", "Éclair", "Tonnerre", "Vent", "Tempête", "Ouragan", "Tornade", "Inondation", "Séisme", "Canicule", "Arc-en-ciel", "Brouillard", "Givre", "Grêle", "Rosée", "Aurore boréale", "Éclipse", "Comète", "Astéroïde", "Planète", "Galaxie", "Univers", "Espace", "Astronaute", "Extraterrestre", "Robot", "Intelligence artificielle", "Internet", "Réseaux sociaux", "Jeu vidéo", "Streaming", "Podcast", "Selfie", "Emoji", "Hashtag", "Bug", "Virus informatique", "Hacker", "Code", "Algorithme", "Données", "Cloud", "Batterie", "Wi-Fi", "Bluetooth", "USB", "HDMI", "Écran tactile", "Réalité virtuelle", "Réalité augmentée", "Drone", "Imprimante 3D", "Voiture électrique", "Panneau solaire", "Éolienne", "Recyclage", "Écologie", "Réchauffement climatique", "Biodiversité", "Pollution", "Déforestation", "Énergie nucléaire", "Espace"
+        ];
+        
+        let words = [...baseWords];
+        let teams = [{ name: "Équipe A", score: 0 }, { name: "Équipe B", score: 0 }];
+        let winningScore = 0;
+        let currentTeamIndex = 0;
+
+        function renderSetup() {
             const container = document.getElementById('teams-container');
             container.innerHTML = "";
-            teams.forEach((t, i) => {
-                container.innerHTML += `<div class="config-row"><input type="text" value="${t.name}" onchange="teams[${i}].name=this.value"></div>`;
+            teams.forEach((team, index) => {
+                const row = document.createElement('div');
+                row.className = 'config-row';
+                row.innerHTML = `<input type="text" value="${team.name}" onchange="teams[${index}].name = this.value">`;
+                container.appendChild(row);
             });
         }
 
-        function addTeam() {
-            teams.push({name: `Équipe ${teams.length + 1}`, score: 0});
-            renderTeams();
+        function addTeam() { 
+            teams.push({ name: `Équipe ${teams.length + 1}`, score: 0 }); 
+            renderSetup(); 
         }
 
-        // 2. Lancer le jeu
-        function startGame() {
+        function startCompliciteGame() {
+            winningScore = parseInt(document.getElementById('win-score-input').value) || 0;
             document.getElementById('comp-setup').classList.add('hidden');
             document.getElementById('comp-game').classList.remove('hidden');
-            nextTurn();
+            nextRound();
         }
 
-        function nextTurn() {
-            const word = wordsList[Math.floor(Math.random() * wordsList.length)];
-            document.getElementById('word-to-guess').innerText = word;
+        function nextRound() {
+            if (words.length === 0) words = [...baseWords];
+            const idx = Math.floor(Math.random() * words.length);
+            document.getElementById('word-to-guess').innerText = words[idx];
+            words.splice(idx, 1);
             updateUI();
         }
 
         function updateUI() {
             const sb = document.getElementById('scoreboard');
             sb.innerHTML = "";
-            teams.forEach((t, i) => {
-                sb.innerHTML += `
-                    <div class="team-score-box ${i === currentIdx ? 'team-active' : ''}">
-                        <span class="ts-val">${t.score}</span>
-                        <span class="ts-name">${t.name}</span>
-                    </div>`;
+            teams.forEach((t, idx) => {
+                const div = document.createElement('div');
+                div.className = `team-score-box ${idx === currentTeamIndex ? 'team-active' : ''}`;
+                div.innerHTML = `<span class="ts-val">${t.score}</span><span class="ts-name">${t.name}</span>`;
+                sb.appendChild(div);
             });
+            document.getElementById('turn-indicator').innerText = `Tour de : ${teams[currentTeamIndex].name}`;
         }
 
-        // 3. Marquer des points
-        function scorePoint(type) {
-            if (type === 'win') teams[currentIdx].score++;
-            if (type === 'steal') {
-                let next = (currentIdx + 1) % teams.length;
-                teams[next].score++;
+        function handleStealAttempt() {
+            // Si 2 équipes, le point va à l'autre automatiquement
+            if (teams.length === 2) {
+                roundEnd('steal', currentTeamIndex === 0 ? 1 : 0);
+            } else {
+                const container = document.getElementById('steal-buttons-container');
+                container.innerHTML = "";
+                teams.forEach((t, idx) => {
+                    if (idx !== currentTeamIndex) {
+                        const btn = document.createElement('button');
+                        btn.className = "btn btn-primary";
+                        btn.innerText = t.name;
+                        btn.onclick = () => { 
+                            document.getElementById('modal-steal').classList.add('hidden');
+                            roundEnd('steal', idx); 
+                        };
+                        container.appendChild(btn);
+                    }
+                });
+                document.getElementById('modal-steal').classList.remove('hidden');
             }
-            currentIdx = (currentIdx + 1) % teams.length;
-            nextTurn();
         }
 
-        // 4. LE MAINTIEN (FIXÉ)
-        const holdZone = document.getElementById('hold-zone');
-        const wordBox = document.getElementById('word-to-guess');
+        function roundEnd(type, beneficiaryIndex = null) {
+            if (type === 'win') {
+                teams[currentTeamIndex].score++;
+            } else if (type === 'steal') {
+                teams[beneficiaryIndex].score++;
+            }
+            
+            // Vérification Victoire
+            if (winningScore > 0 && (teams[currentTeamIndex].score >= winningScore || (beneficiaryIndex !== null && teams[beneficiaryIndex].score >= winningScore))) {
+                const winner = teams.find(t => t.score >= winningScore);
+                document.getElementById('winner-name').innerText = winner.name + " GAGNE !";
+                document.getElementById('modal-victory').classList.remove('hidden');
+                return;
+            }
 
-        const show = (e) => { e.preventDefault(); wordBox.classList.add('visible'); holdZone.classList.add('active'); };
-        const hide = () => { wordBox.classList.remove('visible'); holdZone.classList.remove('active'); };
+            currentTeamIndex = (currentTeamIndex + 1) % teams.length;
+            nextRound();
+        }
+
+        // --- LOGIQUE DE MAINTIEN ---
+        const holdZone = document.getElementById('hold-zone');
+        const wordDisplay = document.getElementById('word-to-guess');
+        const holdInst = document.getElementById('hold-instruction');
+
+        const show = (e) => {
+            if(e.cancelable) e.preventDefault();
+            wordDisplay.classList.add('visible');
+            holdZone.classList.add('active');
+            holdInst.style.opacity = "0";
+        }
+        const hide = () => {
+            wordDisplay.classList.remove('visible');
+            holdZone.classList.remove('active');
+            holdInst.style.opacity = "1";
+        }
 
         holdZone.addEventListener('mousedown', show);
         holdZone.addEventListener('mouseup', hide);
-        holdZone.addEventListener('touchstart', show);
+        holdZone.addEventListener('mouseleave', hide);
+        holdZone.addEventListener('touchstart', show, {passive:false});
         holdZone.addEventListener('touchend', hide);
 
-        renderTeams();
+        renderSetup();
     </script>
 </body>
 </html>
