@@ -58,10 +58,58 @@
 
     <script>
         const icamWords = [
-            { civ: "Cafét", und: "Bar" }, { civ: "Rattrapage", und: "Redoublement" }, { civ: "Ingénieur", und: "Technicien" },
-            { civ: "Stage", und: "Alternance" }, { civ: "Polytech", und: "INSA" }, { civ: "TP", und: "TD" },
-            { civ: "BDE", und: "BDS" }, { civ: "Intégration", und: "Bizutage" }, { civ: "Projet", und: "Dossier" },
-            { civ: "Diplôme", und: "Certificat" }, { civ: "Nuit de l'ICAM", und: "Gala" }, { civ: "Foy's", und: "Appart" }
+           const allWords = [
+    // --- TES MOTS ---
+    { civ: "Semaine de l'ART", und: "Féria du Bar" }, { civ: "Rattrapage", und: "Redoublement" }, 
+    { civ: "Ingénieur", und: "Technicien" }, { civ: "Stage", und: "Alternance" }, 
+    { civ: "IPSA", und: "INSA" }, { civ: "TP", und: "TD" }, { civ: "BDE", und: "BDS" }, 
+    { civ: "Intégration", und: "Bizutage" }, { civ: "Projet", und: "Dossier" },
+    { civ: "Diplôme", und: "Certificat" }, { civ: "Nuit de l'ICAM", und: "BH" }, 
+    { civ: "Foyer", und: "Bar" }, { civ: "Batiment A", und: "Batiment K" }, 
+    { civ: "Allemand", und: "Espagnol" },
+
+    // --- COURS & ÉTUDES (ICAM STYLE) ---
+    { civ: "Amphi", und: "Salle de classe" }, { civ: "Partiel", und: "Examen" },
+    { civ: "Calculatrice", und: "Règle à calcul" }, { civ: "SolidWorks", und: "Catia" },
+    { civ: "Thermodynamique", und: "Mécanique des fluides" }, { civ: "CAO", und: "DAO" },
+    { civ: "Matériaux", und: "Structures" }, { civ: "Compte-rendu", und: "Rapport" },
+    { civ: "Électronique", und: "Automatisme" }, { civ: "Arduino", und: "Raspberry Pi" },
+    { civ: "Usinage", und: "Soudure" }, { civ: "Imprimante 3D", und: "Découpe laser" },
+    { civ: "Atelier", und: "Laboratoire" }, { civ: "Erasmus", und: "Séjour à l'étranger" },
+    { civ: "Soutenance", und: "Présentation orale" }, { civ: "Physique", und: "Chimie" },
+
+    // --- SOIRÉES & VIE ASSO ---
+    { civ: "Bière", und: "Cidre" }, { civ: "Pinte", und: "Demi" },
+    { civ: "Tireuse", und: "Fût" }, { civ: "Shot", und: "Cocktail" },
+    { civ: "WEI", und: "Désintégration" }, { civ: "Gala", und: "Soirée" },
+    { civ: "Fanfare", und: "Pompom" }, { civ: "Bière de Noël", und: "Bière de Printemps" },
+    { civ: "Élections BDE", und: "Passation" }, { civ: "Sponsoring", und: "Partenariat" },
+    { civ: "Goodies", und: "Pull de promo" }, { civ: "Forum Entreprises", und: "Job Dating" },
+    { civ: "Afterwork", und: "Apéro" }, { civ: "Déguisement", und: "Thème de soirée" },
+    { civ: "Trésorier", und: "Président d'asso" }, { civ: "Barbecue", und: "Plancha" },
+
+    // --- QUOTIDIEN À LA "MAIZ" (RÉSIDENCE) ---
+    { civ: "Cuisine commune", und: "Réfectoire" }, { civ: "Appartement", und: "Chambre" },
+    { civ: "Plat de pâtes", und: "Riz" }, { civ: "Lave-linge", und: "Sèche-linge" },
+    { civ: "Ménage", und: "Vaisselle" }, { civ: "Voisin de palier", und: "Colocataire" },
+    { civ: "Micro-ondes", und: "Four" }, { civ: "Cafetière", und: "Bouilloire" },
+    { civ: "Poubelle de tri", und: "Déchetterie" }, { civ: "Gardien", und: "Concierge" },
+    { civ: "Canapé", und: "Fauteuil" }, { civ: "Wifi", und: "Bluetooth" },
+
+    // --- ÉQUIPEMENT & TECH ---
+    { civ: "Perceuse", und: "Visseuse" }, { civ: "Moteur", und: "Batterie" },
+    { civ: "Vis", und: "Boulon" }, { civ: "Marteau", und: "Masse" },
+    { civ: "Tournevis", und: "Clé à molette" }, { civ: "Fer à souder", und: "Pistolet à colle" },
+    { civ: "Vélo", und: "Trottinette" }, { civ: "Covoiturage", und: "Train" },
+    { civ: "Iphone", und: "Android" }, { civ: "Macbook", und: "PC portable" },
+    { civ: "Casque audio", und: "Écouteurs" }, { civ: "Souris", und: "Clavier" },
+
+    // --- DÉLIRES & JARGON ---
+    { civ: "Major de promo", und: "Délégué" }, { civ: "Sommeil", und: "Sieste" },
+    { civ: "Café", und: "Thé" }, { civ: "Sms", und: "Mail" },
+    { civ: "Vacances", und: "Week-end" }, { civ: "Lundi matin", und: "Vendredi soir" },
+    { civ: "Pizza", und: "Kebab" }, { civ: "Burger", und: "Tacos" }
+];, 
         ];
 
         let ucPlayers = ["Joueur 1", "Joueur 2", "Joueur 3"];
