@@ -9,20 +9,24 @@
 </head>
 <body>
     <div class="container">
-        <div style="padding: 10px 0;"><a href="index.html" style="text-decoration:none; font-size: 1.5rem;">🏠</a></div>
+        <div style="padding: 10px 0;">
+            <a href="index.html" style="text-decoration:none; font-size: 1.5rem;">🏠</a>
+        </div>
         
         <div id="comp-setup">
             <h1 style="color:var(--neon-blue); text-align:center;">Complicité</h1>
-            <div class="config-box">
-                <label>Objectif de points</label>
+            <div class="config-box" style="background:rgba(20,20,20,0.8); padding:20px; border-radius:20px;">
+                <label>Objectif de points (0 = Infini)</label>
                 <div class="config-row">
                     <input type="number" id="win-score-input" value="10">
                 </div>
+                
                 <label style="margin-top:15px; display:block;">Équipes</label>
                 <div id="teams-container"></div>
+                
                 <button class="btn btn-neutral" onclick="addTeam()" style="width:100%; margin-top:10px;">+ Ajouter Équipe</button>
             </div>
-            <button class="btn btn-primary" onclick="startCompliciteGame()" style="width:100%; margin-top:20px;">LANCER LA PARTIE</button>
+            <button class="btn btn-primary" onclick="startCompliciteGame()" style="width:100%; margin-top:20px;">Lancer la partie</button>
         </div>
 
         <div id="comp-game" class="hidden">
@@ -47,7 +51,7 @@
         <div class="modal-content">
             <h3 style="color:var(--neon-red)">Qui a volé le point ?</h3>
             <div id="steal-buttons-container" class="game-controls"></div>
-            <button class="btn btn-neutral" onclick="document.getElementById('modal-steal').classList.add('hidden')">Annuler</button>
+            <button class="btn btn-neutral" onclick="closeModal('modal-steal')">Annuler</button>
         </div>
     </div>
 
@@ -60,7 +64,7 @@
     </div>
 
     <script>
-        const baseWords = ["Brosse à dents", "Micro-ondes", "Harry Potter", "Batman", "Zidane", "Pizza", "Raclette", "Sushi", "Pigeon", "Moustique", "Licorne", "Vomir", "Danser", "Iphone", "Lave-vaisselle", "Tondeuse", "Frigo", "Parapluie", "Sac à dos", "Dentifrice", "Montre", "Basket", "Cravate", "Casquette", "Bonnet", "Écharpe", "Pull", "Aspirateur", "Poêle", "Couteau", "Bouteille", "Ordinateur", "Tablette", "Console", "Livre", "Cinéma", "Zoo", "Piscine", "Restaurant", "Avion", "Vélo", "Voiture", "Fusée", "Skateboard", "Surf", "Soleil", "Pluie", "Orage", "Arc-en-ciel", "Robot", "Selfie"];
+        const baseWords = ["Brosse à dents", "Micro-ondes", "Harry Potter", "Batman", "Zidane", "Pizza", "Raclette", "Sushi", "Pigeon", "Moustique", "Licorne", "Vomir", "Danser", "Pleurer", "Iphone", "Lave-vaisselle", "Tondeuse", "Frigo", "Parapluie", "Sac à dos", "Valise", "Dentifrice", "Savon", "Miroir", "Montre", "Bague", "Basket", "Cravate", "Chapeau", "Écharpe", "Pull", "Aspirateur", "Poêle", "Casserole", "Couteau", "Bouteille", "Ordinateur", "Tablette", "Console", "Manette", "Livre", "Cinéma", "Zoo", "Restaurant", "Avion", "Train", "Voiture", "Fusée", "Skateboard", "Surf", "Soleil", "Pluie", "Orage", "Robot", "Internet", "Selfie"];
         
         let words = [...baseWords];
         let teams = [{ name: "Équipe A", score: 0 }, { name: "Équipe B", score: 0 }];
@@ -116,13 +120,14 @@
             document.getElementById('turn-indicator').innerText = `Tour de : ${teams[currentTeamIndex].name}`;
         }
 
-        // --- GESTION DU VOL (FIXÉ) ---
+        // --- GESTION DU BOUTON INTERCEPTÉ ---
         function handleStealAttempt() {
             if (teams.length === 2) {
-                // S'il n'y a que 2 équipes, l'autre prend le point direct
-                roundEnd('steal', currentTeamIndex === 0 ? 1 : 0);
+                // Si 2 équipes : l'autre gagne le point automatiquement
+                const beneficiaryIndex = (currentTeamIndex === 0) ? 1 : 0;
+                roundEnd('steal', beneficiaryIndex);
             } else {
-                // S'il y a + de 2 équipes, on demande qui a volé
+                // Si + de 2 équipes : on affiche la modale pour choisir qui vole
                 const container = document.getElementById('steal-buttons-container');
                 container.innerHTML = "";
                 teams.forEach((t, idx) => {
@@ -131,7 +136,7 @@
                         btn.className = "btn btn-primary";
                         btn.innerText = t.name;
                         btn.onclick = () => { 
-                            document.getElementById('modal-steal').classList.add('hidden');
+                            closeModal('modal-steal');
                             roundEnd('steal', idx); 
                         };
                         container.appendChild(btn);
@@ -142,23 +147,39 @@
         }
 
         function roundEnd(type, beneficiaryIndex = null) {
-            if (type === 'win') teams[currentTeamIndex].score++;
-            else if (type === 'steal') teams[beneficiaryIndex].score++;
-            
-            // VERIF VICTOIRE + CONFETTIS
-            let winner = teams.find(t => winningScore > 0 && t.score >= winningScore);
-            if (winner) {
-                document.getElementById('winner-name').innerText = winner.name + " GAGNE !";
-                document.getElementById('modal-victory').classList.remove('hidden');
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                return;
+            if (type === 'win') {
+                teams[currentTeamIndex].score++;
+            } else if (type === 'steal') {
+                teams[beneficiaryIndex].score++;
             }
+            
+            // Vérification de victoire
+            let winnerFound = false;
+            teams.forEach(t => {
+                if (winningScore > 0 && t.score >= winningScore) {
+                    document.getElementById('winner-name').innerText = t.name + " GAGNE !";
+                    document.getElementById('modal-victory').classList.remove('hidden');
+                    // Déclenchement des confettis
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                    winnerFound = true;
+                }
+            });
 
-            currentTeamIndex = (currentTeamIndex + 1) % teams.length;
-            nextRound();
+            if (!winnerFound) {
+                currentTeamIndex = (currentTeamIndex + 1) % teams.length;
+                nextRound();
+            }
         }
 
-        // --- MAINTIEN ---
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // --- LOGIQUE DE MAINTIEN ---
         const holdZone = document.getElementById('hold-zone');
         const wordDisplay = document.getElementById('word-to-guess');
         const holdInst = document.getElementById('hold-instruction');
@@ -177,6 +198,7 @@
 
         holdZone.addEventListener('mousedown', show);
         holdZone.addEventListener('mouseup', hide);
+        holdZone.addEventListener('mouseleave', hide);
         holdZone.addEventListener('touchstart', show, {passive:false});
         holdZone.addEventListener('touchend', hide);
 
