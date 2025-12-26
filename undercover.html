@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Undercover ICAM</title>
+    <title>Undercover</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,45 +11,45 @@
         <div class="top-nav"><a href="index.html" class="btn-home">🏠</a></div>
 
         <div id="uc-setup">
-            <h1 style="color:var(--neon-orange); text-shadow: 0 0 10px rgba(255, 61, 0, 0.4); text-align:center;">Undercover</h1>
-            <p class="tagline" style="border:none; text-align:center;">Édition ICAM</p>
+            <h1 style="color:var(--neon-orange); text-shadow: 0 0 10px rgba(255, 61, 0, 0.4);">Undercover</h1>
+            <p class="tagline" style="border:none;">Édition ICAM</p>
             <div class="config-box">
                 <div class="role-counter">
                     <span style="color:var(--neon-orange); font-weight:bold;">🕵️ Undercovers</span>
-                    <input type="number" id="uc-count" value="1" min="1" max="3" style="width:50px; padding:5px; background:#000; color:white; border:1px solid #333;">
+                    <input type="number" id="uc-count" value="1" min="1" max="3" style="width:50px; padding:5px; background:#000;">
                 </div>
-                <div class="role-counter" style="margin-top:10px;">
+                <div class="role-counter">
                     <span style="color:#aaa; font-style:italic;">👻 Mr. White</span>
-                    <input type="number" id="white-count" value="0" min="0" max="2" style="width:50px; padding:5px; background:#000; color:white; border:1px solid #333;">
+                    <input type="number" id="white-count" value="0" min="0" max="2" style="width:50px; padding:5px; background:#000;">
                 </div>
-                <div style="width:100%; height:1px; background:#333; margin: 20px 0;"></div>
+                <div style="width:100%; height:1px; background:#333; margin: 10px 0;"></div>
                 <label>Joueurs (Min. 3)</label>
                 <div id="uc-players-container" style="display:flex; flex-direction:column; gap:10px;"></div>
                 <button class="btn btn-neutral" onclick="addUcPlayer()" style="margin-top:10px; border:1px dashed #555;">+ Ajouter Joueur</button>
             </div>
-            <button class="btn btn-orange" onclick="startUndercoverGame()" style="margin-top:15px; width:100%;">Commencer la distribution</button>
+            <button class="btn btn-orange" onclick="startUndercoverGame()" style="margin-top:15px;">Commencer la distribution</button>
         </div>
 
-        <div id="uc-distrib" class="hidden" style="height:100%; display:flex; flex-direction:column; justify-content:center; text-align:center;">
+        <div id="uc-distrib" class="hidden" style="height:100%; display:flex; flex-direction:column; justify-content:center;">
             <h2 id="distrib-title" style="color:#888; font-size:1.2rem; font-weight:300; text-transform:uppercase;">Passe le téléphone à...</h2>
             <h1 id="distrib-player-name" style="color:var(--neon-orange); font-size:2.5rem; margin-bottom:30px; text-shadow: 0 0 15px rgba(255, 61, 0, 0.5);">JOUEUR</h1>
-            <div id="uc-hold-btn" class="hold-zone" style="height:200px; flex-grow:0; display:flex; align-items:center; justify-content:center; border:2px dashed #444; border-radius:20px;">
+            <div id="uc-hold-btn" class="hold-zone" style="height:200px; flex-grow:0;">
                 <div id="uc-instruction">👆 MAINTIENS POUR VOIR TON MOT SECRET</div>
                 <div id="uc-word-display" style="display:none; font-size:2rem; font-weight:bold; color:white;">MOT</div>
             </div>
             <button id="btn-next-distrib" class="btn btn-neutral hidden" onclick="nextDistrib()" style="margin-top:20px;">Joueur Suivant ➔</button>
         </div>
 
-        <div id="uc-game" class="hidden" style="height:100%; display:flex; flex-direction:column; text-align:center;">
+        <div id="uc-game" class="hidden" style="height:100%; display:flex; flex-direction:column;">
             <h1 style="color:var(--neon-orange);">En Jeu</h1>
-            <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+            <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
                 <p style="font-size:1rem; color:#888;">Les rôles ont été distribués.</p>
                 <p style="font-size:2.5rem; font-weight:bold; letter-spacing:2px; margin:20px 0;">DÉBATEZ !</p>
                 <p style="font-size:0.9rem; color:#666;">(Éliminez les intrus)</p>
             </div>
-            <div id="uc-reveal-area" class="hidden" style="background:#111; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #333; text-align:left;">
+            <div id="uc-reveal-area" class="hidden" style="flex-grow:2; background:#111; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #333;">
                 <h3 style="margin-top:0; color:#888; font-size:0.9rem; text-transform:uppercase;">Révélation des rôles :</h3>
-                <div id="uc-roles-list"></div>
+                <div id="uc-roles-list" class="role-reveal-list"></div>
             </div>
             <button id="btn-reveal-uc" class="btn btn-orange" onclick="revealUndercover()">👁️ Révéler les rôles</button>
             <button id="btn-reset-uc" class="btn btn-neutral hidden" onclick="resetUndercover()">Nouvelle Partie</button>
@@ -57,7 +57,6 @@
     </div>
 
     <script>
-        // LA LISTE COMPLÈTE ICAM (SANS RÉDUCTION)
         const icamWords = [
             { civ: "Semaine de l'ART", und: "Féria du Bar" }, { civ: "Rattrapage", und: "Redoublement" }, 
             { civ: "Ingénieur", und: "Technicien" }, { civ: "Stage", und: "Alternance" }, 
@@ -65,39 +64,39 @@
             { civ: "Intégration", und: "Bizutage" }, { civ: "Projet", und: "Dossier" },
             { civ: "Diplôme", und: "Certificat" }, { civ: "Nuit de l'ICAM", und: "BH" }, 
             { civ: "Foyer", und: "Bar" }, { civ: "Batiment A", und: "Batiment K" }, 
-            { civ: "Allemand", und: "Espagnol" },
-            { civ: "Amphi", und: "Salle de classe" }, { civ: "Partiel", und: "Examen" },
-            { civ: "Calculatrice", und: "Règle à calcul" }, { civ: "SolidWorks", und: "Catia" },
-            { civ: "Thermodynamique", und: "Mécanique des fluides" }, { civ: "CAO", und: "DAO" },
-            { civ: "Matériaux", und: "Structures" }, { civ: "Compte-rendu", und: "Rapport" },
-            { civ: "Électronique", und: "Automatisme" }, { civ: "Arduino", und: "Raspberry Pi" },
-            { civ: "Usinage", und: "Soudure" }, { civ: "Imprimante 3D", und: "Découpe laser" },
-            { civ: "Atelier", und: "Laboratoire" }, { civ: "Erasmus", und: "Séjour à l'étranger" },
-            { civ: "Soutenance", und: "Présentation orale" }, { civ: "Physique", und: "Chimie" },
-            { civ: "Bière", und: "Cidre" }, { civ: "Pinte", und: "Demi" },
-            { civ: "Tireuse", und: "Fût" }, { civ: "Shot", und: "Cocktail" },
-            { civ: "WEI", und: "Désintégration" }, { civ: "Gala", und: "Soirée" },
-            { civ: "Fanfare", und: "Pompom" }, { civ: "Bière de Noël", und: "Bière de Printemps" },
-            { civ: "Élections BDE", und: "Passation" }, { civ: "Sponsoring", und: "Partenariat" },
-            { civ: "Goodies", und: "Pull de promo" }, { civ: "Forum Entreprises", und: "Job Dating" },
-            { civ: "Afterwork", und: "Apéro" }, { civ: "Déguisement", und: "Thème de soirée" },
-            { civ: "Trésorier", und: "Président d'asso" }, { civ: "Barbecue", und: "Plancha" },
-            { civ: "Cuisine commune", und: "Réfectoire" }, { civ: "Appartement", und: "Chambre" },
-            { civ: "Plat de pâtes", und: "Riz" }, { civ: "Lave-linge", und: "Sèche-linge" },
-            { civ: "Ménage", und: "Vaisselle" }, { civ: "Voisin de palier", und: "Colocataire" },
-            { civ: "Micro-ondes", und: "Four" }, { civ: "Cafetière", und: "Bouilloire" },
-            { civ: "Poubelle de tri", und: "Déchetterie" }, { civ: "Gardien", und: "Concierge" },
-            { civ: "Canapé", und: "Fauteuil" }, { civ: "Wifi", und: "Bluetooth" },
-            { civ: "Perceuse", und: "Visseuse" }, { civ: "Moteur", und: "Batterie" },
-            { civ: "Vis", und: "Boulon" }, { civ: "Marteau", und: "Masse" },
-            { civ: "Tournevis", und: "Clé à molette" }, { civ: "Fer à souder", und: "Pistolet à colle" },
-            { civ: "Vélo", und: "Trottinette" }, { civ: "Covoiturage", und: "Train" },
-            { civ: "Iphone", und: "Android" }, { civ: "Macbook", und: "PC portable" },
-            { civ: "Casque audio", und: "Écouteurs" }, { civ: "Souris", und: "Clavier" },
-            { civ: "Major de promo", und: "Délégué" }, { civ: "Sommeil", und: "Sieste" },
-            { civ: "Café", und: "Thé" }, { civ: "Sms", und: "Mail" },
-            { civ: "Vacances", und: "Week-end" }, { civ: "Lundi matin", und: "Vendredi soir" },
-            { civ: "Pizza", und: "Kebab" }, { civ: "Burger", und: "Tacos" }
+            { civ: "Allemand", und: "Espagnol" }, { civ: "Amphi", und: "Salle de classe" }, 
+            { civ: "Partiel", und: "Examen" }, { civ: "Calculatrice", und: "Règle à calcul" },
+            { civ: "SolidWorks", und: "Catia" }, { civ: "Thermodynamique", und: "Mécanique des fluides" },
+            { civ: "CAO", und: "DAO" }, { civ: "Matériaux", und: "Structures" },
+            { civ: "Compte-rendu", und: "Rapport" }, { civ: "Électronique", und: "Automatisme" },
+            { civ: "Arduino", und: "Raspberry Pi" }, { civ: "Usinage", und: "Soudure" },
+            { civ: "Imprimante 3D", und: "Découpe laser" }, { civ: "Atelier", und: "Laboratoire" },
+            { civ: "Erasmus", und: "Séjour à l'étranger" }, { civ: "Soutenance", und: "Présentation orale" },
+            { civ: "Physique", und: "Chimie" }, { civ: "Bière", und: "Cidre" },
+            { civ: "Pinte", und: "Demi" }, { civ: "Tireuse", und: "Fût" },
+            { civ: "Shot", und: "Cocktail" }, { civ: "WEI", und: "Désintégration" },
+            { civ: "Gala", und: "Soirée" }, { civ: "Fanfare", und: "Pompom" },
+            { civ: "Bière de Noël", und: "Bière de Printemps" }, { civ: "Élections BDE", und: "Passation" },
+            { civ: "Sponsoring", und: "Partenariat" }, { civ: "Goodies", und: "Pull de promo" },
+            { civ: "Forum Entreprises", und: "Job Dating" }, { civ: "Afterwork", und: "Apéro" },
+            { civ: "Déguisement", und: "Thème de soirée" }, { civ: "Trésorier", und: "Président d'asso" },
+            { civ: "Barbecue", und: "Plancha" }, { civ: "Cuisine commune", und: "Réfectoire" },
+            { civ: "Appartement", und: "Chambre" }, { civ: "Plat de pâtes", und: "Riz" },
+            { civ: "Lave-linge", und: "Sèche-linge" }, { civ: "Ménage", und: "Vaisselle" },
+            { civ: "Voisin de palier", und: "Colocataire" }, { civ: "Micro-ondes", und: "Four" },
+            { civ: "Cafetière", und: "Bouilloire" }, { civ: "Poubelle de tri", und: "Déchetterie" },
+            { civ: "Gardien", und: "Concierge" }, { civ: "Canapé", und: "Fauteuil" },
+            { civ: "Wifi", und: "Bluetooth" }, { civ: "Perceuse", und: "Visseuse" },
+            { civ: "Moteur", und: "Batterie" }, { civ: "Vis", und: "Boulon" },
+            { civ: "Marteau", und: "Masse" }, { civ: "Tournevis", und: "Clé à molette" },
+            { civ: "Fer à souder", und: "Pistolet à colle" }, { civ: "Vélo", und: "Trottinette" },
+            { civ: "Covoiturage", und: "Train" }, { civ: "Iphone", und: "Android" },
+            { civ: "Macbook", und: "PC portable" }, { civ: "Casque audio", und: "Écouteurs" },
+            { civ: "Souris", und: "Clavier" }, { civ: "Major de promo", und: "Délégué" },
+            { civ: "Sommeil", und: "Sieste" }, { civ: "Café", und: "Thé" },
+            { civ: "Sms", und: "Mail" }, { civ: "Vacances", und: "Week-end" },
+            { civ: "Lundi matin", und: "Vendredi soir" }, { civ: "Pizza", und: "Kebab" },
+            { civ: "Burger", und: "Tacos" }
         ];
 
         let ucPlayers = ["Joueur 1", "Joueur 2", "Joueur 3"];
@@ -123,7 +122,6 @@
                 container.appendChild(row);
             });
         }
-
         function addUcPlayer() { ucPlayers.push(`Joueur ${ucPlayers.length + 1}`); renderUcSetup(); }
         function removeUcPlayer(index) { if (ucPlayers.length <= 3) return; ucPlayers.splice(index, 1); renderUcSetup(); }
 
@@ -131,7 +129,6 @@
             const validPlayers = ucPlayers.filter(p => p.trim() !== "");
             const nbUnder = parseInt(document.getElementById('uc-count').value);
             const nbWhite = parseInt(document.getElementById('white-count').value);
-            
             if (validPlayers.length < 3) { alert("Min. 3 joueurs !"); return; }
             if (nbUnder + nbWhite >= validPlayers.length) { alert("Il faut au moins 1 Civil !"); return; }
 
@@ -140,12 +137,10 @@
             for(let i=0; i<nbUnder; i++) roles.push({ role: 'under', word: pair.und });
             for(let i=0; i<nbWhite; i++) roles.push({ role: 'white', word: "Tu es Mr. White (Pas de mot)" });
             while(roles.length < validPlayers.length) roles.push({ role: 'civil', word: pair.civ });
-            
             roles.sort(() => Math.random() - 0.5);
             
             ucGameData = validPlayers.map((name, i) => ({ name: name, role: roles[i].role, word: roles[i].word }));
             currentDistribIndex = 0;
-            
             document.getElementById('uc-setup').classList.add('hidden');
             document.getElementById('uc-distrib').classList.remove('hidden');
             showDistribScreen();
@@ -169,26 +164,20 @@
                 document.getElementById('uc-reveal-area').classList.add('hidden'); 
                 document.getElementById('btn-reveal-uc').classList.remove('hidden');
                 document.getElementById('btn-reset-uc').classList.add('hidden');
-            } else { 
-                showDistribScreen(); 
-            }
+            } else { showDistribScreen(); }
         }
 
         function revealUndercover() {
-            const list = document.getElementById('uc-roles-list'); 
-            list.innerHTML = "";
+            const list = document.getElementById('uc-roles-list'); list.innerHTML = "";
             ucGameData.forEach(p => {
                 const div = document.createElement('div'); 
-                div.style.padding = "10px";
-                div.style.borderBottom = "1px solid #222";
                 div.style.display = "flex";
                 div.style.justifyContent = "space-between";
-                
-                let roleText = "Civil", color = "#4CAF50";
-                if(p.role === 'under') { roleText = "Undercover"; color = "#FF9800"; }
-                if(p.role === 'white') { roleText = "Mr. White"; color = "#9E9E9E"; }
-                
-                div.innerHTML = `<span>${p.name}</span> <span style="color:${color}; font-weight:bold;">${roleText}</span>`; 
+                div.style.padding = "5px 0";
+                let roleText = "Civil", roleColor = "#00e676";
+                if(p.role === 'under') { roleText = "Undercover"; roleColor = "#ff3d00"; }
+                if(p.role === 'white') { roleText = "Mr. White"; roleColor = "#aaa"; }
+                div.innerHTML = `<span>${p.name}</span> <span style="color:${roleColor}">${roleText}</span>`; 
                 list.appendChild(div);
             });
             document.getElementById('uc-reveal-area').classList.remove('hidden');
@@ -196,38 +185,28 @@
             document.getElementById('btn-reset-uc').classList.remove('hidden');
         }
 
-        function resetUndercover() { 
-            document.getElementById('uc-game').classList.add('hidden'); 
-            document.getElementById('uc-setup').classList.remove('hidden'); 
-        }
+        function resetUndercover() { document.getElementById('uc-game').classList.add('hidden'); document.getElementById('uc-setup').classList.remove('hidden'); }
 
-        // GESTION DU MAINTIEN POUR VOIR LE MOT
         const ucHoldBtn = document.getElementById('uc-hold-btn'); 
         const ucWord = document.getElementById('uc-word-display'); 
         const ucInst = document.getElementById('uc-instruction');
-        const titleDistrib = document.getElementById('distrib-title');
 
         const showUc = (e) => { 
-            if(e.cancelable) e.preventDefault(); 
+            e.preventDefault(); 
             ucWord.style.display='block'; 
             ucInst.style.display='none'; 
-            titleDistrib.innerText = "Ton mot secret est...";
-            ucHoldBtn.style.border = "2px solid var(--neon-orange)";
         };
         const hideUc = (e) => { 
-            if(e.cancelable) e.preventDefault(); 
+            e.preventDefault(); 
             ucWord.style.display='none'; 
             ucInst.style.display='block'; 
             document.getElementById('btn-next-distrib').classList.remove('hidden'); 
-            titleDistrib.innerText = "C'est bon !";
-            ucHoldBtn.style.border = "2px dashed #444";
         };
 
-        ucHoldBtn.addEventListener('mousedown', showUc); 
-        ucHoldBtn.addEventListener('mouseup', hideUc); 
-        ucHoldBtn.addEventListener('mouseleave', hideUc);
-        ucHoldBtn.addEventListener('touchstart', showUc, {passive:false}); 
-        ucHoldBtn.addEventListener('touchend', hideUc);
+        ucHoldBtn.addEventListener('touchstart', showUc, {passive: false});
+        ucHoldBtn.addEventListener('touchend', hideUc, {passive: false});
+        ucHoldBtn.addEventListener('mousedown', showUc);
+        ucHoldBtn.addEventListener('mouseup', hideUc);
 
         renderUcSetup();
     </script>
