@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Complicité - ICAM Games</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -53,125 +54,116 @@
     </div>
 
     <script>
-        // LISTE DE MOTS MASSIVE (Plus de 100 mots)
-        const baseWords = [
-            "Brosse à dents", "Micro-ondes", "Chaussette", "Télécommande", "Canapé", "Oreiller", "PQ", "Chargeur", "Camping", "Plage", "Prison", "Hôpital", "Ascenseur", "Pizza", "Raclette", "Sushi", "Ketchup", "Divorce", "Mariage", "Enterrement", "Harry Potter", "Batman", "Zidane", "Macron", "Pigeon", "Moustique", "Licorne", "Dinosaure", "Vomir", "Danser", "Pleurer", "Crier", "Iphone", "Lave-vaisselle", "Tondeuse", "Sèche-cheveux", "Grille-pain", "Machine à laver", "Frigo", "Coussin", "Tapis", "Rideau", "Clé", "Parapluie", "Sac à dos", "Valise", "Dentifrice", "Savon", "Shampoing", "Miroir", "Peigne", "Lunettes", "Montre", "Bague", "Collier", "Bracelet", "Boucle d'oreille", "Chaussure", "Botte", "Sandale", "Basket", "Talon haut", "Cravate", "Ceinture", "Chapeau", "Casquette", "Bonnet", "Écharpe", "Gants", "Maillot de bain", "Pyjama", "Robe", "Jupe", "Pantalon", "Short", "Chemise", "Pull", "Veste", "Manteau", "Costume", "Caleçon", "Culotte", "Soutien-gorge", "Collant", "Chaussette", "Mouchoir", "Serviette", "Gant de toilette", "Éponge", "Balai", "Aspirateur", "Fer à repasser", "Poêle", "Casserole", "Passoire", "Balance", "Mixeur", "Robot de cuisine", "Four", "Plaque de cuisson", "Hotte", "Cafetière", "Bouilloire", "Théière", "Verre", "Assiette", "Couverts", "Fourchette", "Couteau", "Cuillère", "Bouteille", "Canette", "Tire-bouchon", "Ouvre-boîte", "Planche à découper", "Ciseau", "Scotch", "Colle", "Stylo", "Crayon", "Gomme", "Règle", "Calculatrice", "Ordinateur", "Tablette", "Souris", "Clavier", "Écran", "Imprimante", "Casque", "Écouteurs", "Enceinte", "Téléphone", "Appareil photo", "Caméra", "Console de jeux", "Manette", "Livre", "Magazine", "Journal", "Cahier", "Classeur", "Enveloppe", "Timbre", "Carte postale", "Agenda", "Calendrier", "Dictionnaire", "Roman", "BD", "Manga", "Cinéma", "Théâtre", "Musée", "Concert", "Opéra", "Cirque", "Zoo", "Parc d'attraction", "Piscine", "Stade", "Gymnase", "Bibliothèque", "Mairie", "Banque", "Poste", "Gare", "Aéroport", "Hôtel", "Restaurant", "Bar", "Café", "Boulangerie", "Boucherie", "Supermarché", "Pharmacie", "Garage", "Station-service", "Parking", "Pont", "Tunnel", "Autoroute", "Route", "Rue", "Place", "Jardin", "Forêt", "Montagne", "Mer", "Océan", "Lac", "Rivière", "Cascade", "Désert", "Île", "Volcan", "Grotte", "Campagne", "Ferme", "Château", "Église", "Mosquée", "Temple", "Synagogue", "Cimetière", "Usine", "Mine", "Phare", "Moulin", "Barrage", "Port", "Bateau", "Avion", "Train", "Bus", "Tramway", "Métro", "Vélo", "Moto", "Voiture", "Camion", "Tracteur", "Fusée", "Soucoupe volante", "Hélicoptère", "Montgolfière", "Parachute", "Skateboard", "Rollers", "Trottinette", "Ski", "Surf", "Planche à voile", "Plongée", "Pêche", "Chasse", "Randonnée", "Escalade", "Camping", "Pique-nique", "Barbecue", "Feu de camp", "Étoile", "Lune", "Soleil", "Nuage", "Pluie", "Neige", "Orage", "Éclair", "Tonnerre", "Vent", "Tempête", "Ouragan", "Tornade", "Inondation", "Séisme", "Canicule", "Arc-en-ciel", "Brouillard", "Givre", "Grêle", "Rosée", "Aurore boréale", "Éclipse", "Comète", "Astéroïde", "Planète", "Galaxie", "Univers", "Espace", "Astronaute", "Extraterrestre", "Robot", "Intelligence artificielle", "Internet", "Réseaux sociaux", "Jeu vidéo", "Streaming", "Podcast", "Selfie", "Emoji", "Hashtag", "Bug", "Virus informatique", "Hacker", "Code", "Algorithme", "Données", "Cloud", "Batterie", "Wi-Fi", "Bluetooth", "USB", "HDMI", "Écran tactile", "Réalité virtuelle", "Réalité augmentée", "Drone", "Imprimante 3D", "Voiture électrique", "Panneau solaire", "Éolienne", "Recyclage", "Écologie", "Réchauffement climatique", "Biodiversité", "Pollution", "Déforestation", "Énergie nucléaire", "Espace"
-        ];
+    // LISTE DE MOTS MASSIVE (extraite pour la clarté)
+    const baseWords = ["Brosse à dents", "Micro-ondes", "Zidane", "Pizza", "Batman", "Licorne", "Moustique", "Iphone", "Raclette", "Camping"]; // ... (garde ta liste complète ici)
+    let words = [...baseWords];
+    let teams = [{ name: "Équipe A", score: 0 }, { name: "Équipe B", score: 0 }];
+    let winningScore = 0;
+    let currentTeamIndex = 0;
+
+    // FONCTION VIBRATION (Pour l'effet "Wahou")
+    function vibrate(ms = 20) {
+        if (navigator.vibrate) navigator.vibrate(ms);
+    }
+
+    function renderSetup() {
+        const container = document.getElementById('teams-container');
+        container.innerHTML = "";
+        teams.forEach((team, index) => {
+            const row = document.createElement('div');
+            row.className = 'config-row';
+            row.innerHTML = `<input type="text" value="${team.name}" onchange="teams[${index}].name = this.value">`;
+            container.appendChild(row);
+        });
+    }
+
+    function addTeam() { 
+        vibrate(30);
+        teams.push({ name: `Équipe ${teams.length + 1}`, score: 0 }); 
+        renderSetup(); 
+    }
+
+    function startCompliciteGame() {
+        vibrate([50, 30, 50]); // Triple vibration de lancement
+        winningScore = parseInt(document.getElementById('win-score-input').value) || 0;
+        document.getElementById('comp-setup').classList.add('hidden');
+        document.getElementById('comp-game').classList.remove('hidden');
+        nextRound();
+    }
+
+    function nextRound() {
+        if (words.length === 0) words = [...baseWords];
+        const idx = Math.floor(Math.random() * words.length);
+        document.getElementById('word-to-guess').innerText = words[idx];
+        words.splice(idx, 1);
+        updateUI();
+    }
+
+    function updateUI() {
+        const sb = document.getElementById('scoreboard');
+        sb.innerHTML = "";
+        teams.forEach((t, idx) => {
+            const progress = winningScore > 0 ? (t.score / winningScore) * 100 : 0;
+            const div = document.createElement('div');
+            div.className = `team-score-box ${idx === currentTeamIndex ? 'team-active' : ''}`;
+            div.innerHTML = `
+                <span class="ts-val">${t.score}</span>
+                <span class="ts-name">${t.name}</span>
+                <div style="width:100%; height:4px; background:rgba(255,255,255,0.1); margin-top:8px; border-radius:2px;">
+                    <div style="width:${progress}%; height:100%; background:var(--neon-blue); transition:0.5s;"></div>
+                </div>
+            `;
+            sb.appendChild(div);
+        });
+        document.getElementById('turn-indicator').innerText = `Tour de : ${teams[currentTeamIndex].name}`;
+    }
+
+    function roundEnd(type, beneficiaryIndex = null) {
+        vibrate(40); // Vibration à chaque point
+        if (type === 'win') teams[currentTeamIndex].score++;
+        else if (type === 'steal') teams[beneficiaryIndex].score++;
         
-        let words = [...baseWords];
-        let teams = [{ name: "Équipe A", score: 0 }, { name: "Équipe B", score: 0 }];
-        let winningScore = 0;
-        let currentTeamIndex = 0;
-
-        function renderSetup() {
-            const container = document.getElementById('teams-container');
-            container.innerHTML = "";
-            teams.forEach((team, index) => {
-                const row = document.createElement('div');
-                row.className = 'config-row';
-                row.innerHTML = `<input type="text" value="${team.name}" onchange="teams[${index}].name = this.value">`;
-                container.appendChild(row);
-            });
-        }
-
-        function addTeam() { 
-            teams.push({ name: `Équipe ${teams.length + 1}`, score: 0 }); 
-            renderSetup(); 
-        }
-
-        function startCompliciteGame() {
-            winningScore = parseInt(document.getElementById('win-score-input').value) || 0;
-            document.getElementById('comp-setup').classList.add('hidden');
-            document.getElementById('comp-game').classList.remove('hidden');
-            nextRound();
-        }
-
-        function nextRound() {
-            if (words.length === 0) words = [...baseWords];
-            const idx = Math.floor(Math.random() * words.length);
-            document.getElementById('word-to-guess').innerText = words[idx];
-            words.splice(idx, 1);
-            updateUI();
-        }
-
-        function updateUI() {
-            const sb = document.getElementById('scoreboard');
-            sb.innerHTML = "";
-            teams.forEach((t, idx) => {
-                const div = document.createElement('div');
-                div.className = `team-score-box ${idx === currentTeamIndex ? 'team-active' : ''}`;
-                div.innerHTML = `<span class="ts-val">${t.score}</span><span class="ts-name">${t.name}</span>`;
-                sb.appendChild(div);
-            });
-            document.getElementById('turn-indicator').innerText = `Tour de : ${teams[currentTeamIndex].name}`;
-        }
-
-        function handleStealAttempt() {
-            // Si 2 équipes, le point va à l'autre automatiquement
-            if (teams.length === 2) {
-                roundEnd('steal', currentTeamIndex === 0 ? 1 : 0);
-            } else {
-                const container = document.getElementById('steal-buttons-container');
-                container.innerHTML = "";
-                teams.forEach((t, idx) => {
-                    if (idx !== currentTeamIndex) {
-                        const btn = document.createElement('button');
-                        btn.className = "btn btn-primary";
-                        btn.innerText = t.name;
-                        btn.onclick = () => { 
-                            document.getElementById('modal-steal').classList.add('hidden');
-                            roundEnd('steal', idx); 
-                        };
-                        container.appendChild(btn);
-                    }
-                });
-                document.getElementById('modal-steal').classList.remove('hidden');
-            }
-        }
-
-        function roundEnd(type, beneficiaryIndex = null) {
-            if (type === 'win') {
-                teams[currentTeamIndex].score++;
-            } else if (type === 'steal') {
-                teams[beneficiaryIndex].score++;
-            }
+        // VÉRIFICATION VICTOIRE + CONFETTIS
+        if (winningScore > 0 && (teams[currentTeamIndex].score >= winningScore || (beneficiaryIndex !== null && teams[beneficiaryIndex].score >= winningScore))) {
+            const winner = teams.find(t => t.score >= winningScore);
+            document.getElementById('winner-name').innerText = winner.name + " GAGNE !";
+            document.getElementById('modal-victory').classList.remove('hidden');
             
-            // Vérification Victoire
-            if (winningScore > 0 && (teams[currentTeamIndex].score >= winningScore || (beneficiaryIndex !== null && teams[beneficiaryIndex].score >= winningScore))) {
-                const winner = teams.find(t => t.score >= winningScore);
-                document.getElementById('winner-name').innerText = winner.name + " GAGNE !";
-                document.getElementById('modal-victory').classList.remove('hidden');
-                return;
-            }
-
-            currentTeamIndex = (currentTeamIndex + 1) % teams.length;
-            nextRound();
+            // L'EXPLOSION DE CONFETTIS
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#00bcd4', '#d500f9', '#00e676']
+            });
+            return;
         }
 
-        // --- LOGIQUE DE MAINTIEN ---
-        const holdZone = document.getElementById('hold-zone');
-        const wordDisplay = document.getElementById('word-to-guess');
-        const holdInst = document.getElementById('hold-instruction');
+        currentTeamIndex = (currentTeamIndex + 1) % teams.length;
+        nextRound();
+    }
 
-        const show = (e) => {
-            if(e.cancelable) e.preventDefault();
-            wordDisplay.classList.add('visible');
-            holdZone.classList.add('active');
-            holdInst.style.opacity = "0";
-        }
-        const hide = () => {
-            wordDisplay.classList.remove('visible');
-            holdZone.classList.remove('active');
-            holdInst.style.opacity = "1";
-        }
+    // --- LOGIQUE DE MAINTIEN AVEC VIBRATION ---
+    const holdZone = document.getElementById('hold-zone');
+    const wordDisplay = document.getElementById('word-to-guess');
 
-        holdZone.addEventListener('mousedown', show);
-        holdZone.addEventListener('mouseup', hide);
-        holdZone.addEventListener('mouseleave', hide);
-        holdZone.addEventListener('touchstart', show, {passive:false});
-        holdZone.addEventListener('touchend', hide);
+    const show = (e) => {
+        if(e.cancelable) e.preventDefault();
+        vibrate(10); // Petite secousse quand le mot apparaît
+        wordDisplay.classList.add('visible');
+        holdZone.classList.add('active');
+    }
+    const hide = () => {
+        wordDisplay.classList.remove('visible');
+        holdZone.classList.remove('active');
+    }
 
-        renderSetup();
-    </script>
+    holdZone.addEventListener('mousedown', show);
+    holdZone.addEventListener('mouseup', hide);
+    holdZone.addEventListener('touchstart', show, {passive:false});
+    holdZone.addEventListener('touchend', hide);
+
+    renderSetup();
+</script>
 </body>
 </html>
