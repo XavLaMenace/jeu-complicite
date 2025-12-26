@@ -24,12 +24,12 @@ body {
     color: #ffffff;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
-    /* Utilisation de dvh (dynamic viewport height) pour éviter les bugs de barre d'adresse sur mobile */
+    /* FIX MOBILE : Utilise toute la hauteur sans scroll */
     height: 100vh;
     height: 100dvh; 
     display: flex;
     justify-content: center;
-    overflow: hidden; /* Empêche le scroll global qui casse l'immersion */
+    overflow: hidden;
 }
 
 body::after {
@@ -40,10 +40,10 @@ body::after {
 }
 
 .container {
-    width: 100%; /* Prend toute la largeur sur tel */
+    width: 95%;
     max-width: 500px;
     height: 100%;
-    padding: 15px; /* Légère réduction pour gagner de la place */
+    padding: 15px;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -51,119 +51,139 @@ body::after {
 }
 
 /* --- HUB ACCUEIL --- */
-.hub-title { font-size: 2rem; font-weight: 900; text-align: center; margin: 0; letter-spacing: 1px; }
-.tagline { font-size: 0.7rem; text-align: center; color: #888; margin-bottom: 15px; text-transform: uppercase; }
+.hub-title { font-size: 2.2rem; font-weight: 900; text-align: center; margin: 0; letter-spacing: 1px; }
+.tagline { font-size: 0.8rem; text-align: center; color: #888; margin-bottom: 20px; text-transform: uppercase; }
 
 .hub-grid { 
     display: flex; 
     flex-direction: column; 
-    gap: 12px; 
-    overflow-y: auto; /* Permet de scroller si trop de jeux */
-    padding-bottom: 20px;
+    gap: 15px; 
+    overflow-y: auto; /* Permet de scroller si trop de cartes */
 }
 
 .game-card {
     background: var(--card-bg);
     border-radius: 20px;
-    padding: 20px;
+    padding: 25px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
     text-decoration: none;
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.game-card:active { transform: scale(0.98); } /* Feedback tactile sur tel */
+.game-card:hover { transform: scale(1.03); border-color: var(--neon-blue); background: rgba(35, 35, 35, 0.98); }
+.game-card-icon { font-size: 3.2rem; }
+.game-card-text h3 { margin: 0; font-size: 1.6rem; }
+.game-card-text p { margin-top: 5px; color: #aaa; font-size: 0.95rem; }
 
-.game-card-icon { font-size: 2.8rem; }
-.game-card-text h3 { margin: 0; font-size: 1.4rem; }
-.game-card-text p { margin-top: 3px; color: #aaa; font-size: 0.85rem; line-height: 1.2; }
+.card-blue { border-left: 10px solid var(--neon-blue); }
+.card-orange { border-left: 10px solid var(--neon-orange); }
+.card-purple { border-left: 10px solid var(--neon-purple); }
 
 /* --- INPUTS --- */
 .config-box { 
     background: var(--card-bg); 
     border-radius: 20px; 
-    padding: 15px; 
+    padding: 20px; 
     border: 1px solid rgba(255,255,255,0.1);
-    overflow-y: auto; /* Important pour les longues listes de joueurs */
-    max-height: 60vh; 
+    overflow-y: auto;
+    max-height: 50vh;
 }
 
-/* --- COMPLICITÉ & UNDERCOVER (ADAPTATION ÉCRAN) --- */
-#scoreboard { 
-    display: flex; 
-    justify-content: center; 
-    gap: 10px; 
-    margin: 10px 0; 
+.config-row {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05) !important;
+    margin-bottom: 10px;
+    padding: 0 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+input {
+    background: transparent !important;
+    border: none !important;
+    color: white !important;
+    padding: 14px 0 !important;
+    font-size: 1.1rem !important;
+    width: 100%;
+    outline: none !important;
+}
+
+/* --- SCORES ET MOT --- */
+#scoreboard { display: flex; justify-content: center; gap: 15px; margin: 15px 0; }
 
 .team-score-box {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
-    padding: 10px 5px;
+    border-radius: 18px;
+    padding: 15px 10px;
     text-align: center;
     flex: 1;
     border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-.ts-val { font-size: 1.8rem; font-weight: 900; display: block; }
-.ts-name { font-size: 0.65rem; color: #888; margin-top: 3px; }
-
-/* La zone de mot doit être flexible pour ne pas pousser les boutons hors écran */
-.word-display {
-    font-size: 2.2rem; font-weight: 900; text-align: center;
-    margin: 15px 0; color: var(--neon-blue);
-    min-height: 3.5rem; /* Évite les sauts d'interface quand le mot apparaît */
+.team-active {
+    border-color: var(--neon-green) !important;
+    background: rgba(0, 230, 118, 0.1) !important;
+    transform: scale(1.05);
 }
+
+.ts-val { font-size: 2.5rem; font-weight: 900; display: block; line-height: 1; }
+.ts-name { font-size: 0.75rem; color: #888; text-transform: uppercase; margin-top: 5px; }
+
+.word-display {
+    font-size: 2.5rem; font-weight: 900; text-align: center;
+    margin: 20px 0; color: var(--neon-blue);
+    opacity: 0; visibility: hidden; transform: scale(0.9); transition: 0.2s ease;
+}
+.word-display.visible { opacity: 1; visibility: visible; transform: scale(1); }
 
 .hold-zone {
     background: rgba(255, 255, 255, 0.05);
     border: 3px dashed rgba(255, 255, 255, 0.2);
     border-radius: 20px;
-    padding: 30px 15px;
+    padding: 35px 20px;
     text-align: center;
+    cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
-    touch-action: none; /* Crucial pour le maintien sur mobile */
-    flex-grow: 1; /* Prend l'espace disponible */
+    /* FIX MOBILE : Empêche le scroll quand on appuie */
+    touch-action: none;
+    transition: 0.3s;
+    flex-grow: 1;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
 }
+.hold-zone.active { border-style: solid; border-color: var(--neon-blue); background: rgba(0, 188, 212, 0.1); }
 
 /* --- BOUTONS --- */
 .game-controls { 
     display: flex; 
     flex-direction: column; 
-    gap: 10px; 
-    margin-top: auto; /* Pousse les contrôles vers le bas */
-    padding-bottom: 10px;
+    gap: 12px; 
+    margin-top: auto; /* Colle les boutons en bas sur mobile */
 }
 
 .btn {
-    padding: 14px; border-radius: 14px; border: none; font-weight: 900;
-    text-transform: uppercase; cursor: pointer; font-size: 0.95rem;
+    padding: 16px; border-radius: 14px; border: none; font-weight: 900;
+    text-transform: uppercase; cursor: pointer; font-size: 1rem; transition: 0.2s;
 }
-
-/* --- MEDIA QUERIES (Écrans très petits ou courts) --- */
-@media (max-height: 670px) {
-    .hub-title { font-size: 1.6rem; }
-    .game-card { padding: 15px; }
-    .game-card-icon { font-size: 2.2rem; }
-    .ts-val { font-size: 1.5rem; }
-    .word-display { font-size: 1.8rem; margin: 10px 0; }
-    .hold-zone { padding: 15px; }
-    .btn { padding: 12px; font-size: 0.85rem; }
-}
-
-/* --- MODALES --- */
-.modal-content {
-    width: 90%;
-    padding: 20px;
-    max-height: 80vh;
-    overflow-y: auto;
-}
+.btn-primary { background: var(--neon-blue); color: #000; }
+.btn-orange { background: var(--neon-orange); color: #fff; box-shadow: 0 0 15px rgba(255, 61, 0, 0.4); }
+.btn-found, .btn-success { background: var(--neon-green); color: #000; }
+.btn-intercept, .btn-danger { background: var(--neon-red); color: #fff; }
+.btn-neutral { background: rgba(255,255,255,0.1); color: #fff; }
 
 .hidden { display: none !important; }
+
+/* FIX POUR PETITS ÉCRANS */
+@media (max-height: 700px) {
+    .hub-title { font-size: 1.8rem; }
+    .ts-val { font-size: 2rem; }
+    .word-display { font-size: 2rem; margin: 10px 0; }
+    .hold-zone { padding: 20px; }
+}
