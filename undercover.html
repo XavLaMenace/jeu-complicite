@@ -5,6 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Undercover</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles spécifiques ajoutés pour la V2 */
+        .player-vote-btn {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .player-vote-btn:hover { border-color: var(--neon-orange); background: #222; }
+        
+        .eliminated-log {
+            font-size: 0.9rem;
+            color: #888;
+            border-bottom: 1px solid #333;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            border: 1px solid var(--neon-orange);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -16,11 +52,11 @@
             <div class="config-box">
                 <div class="role-counter">
                     <span style="color:var(--neon-orange); font-weight:bold;">🕵️ Undercovers</span>
-                    <input type="number" id="uc-count" value="1" min="1" max="3" style="width:50px; padding:5px; background:#000;">
+                    <input type="number" id="uc-count" value="1" min="1" max="3" style="width:50px; padding:5px; background:#000; border:1px solid #444; color:white; border-radius:4px;">
                 </div>
                 <div class="role-counter">
                     <span style="color:#aaa; font-style:italic;">👻 Mr. White</span>
-                    <input type="number" id="white-count" value="0" min="0" max="2" style="width:50px; padding:5px; background:#000;">
+                    <input type="number" id="white-count" value="0" min="0" max="2" style="width:50px; padding:5px; background:#000; border:1px solid #444; color:white; border-radius:4px;">
                 </div>
                 <div style="width:100%; height:1px; background:#333; margin: 10px 0;"></div>
                 <label>Joueurs (Min. 3)</label>
@@ -42,17 +78,41 @@
 
         <div id="uc-game" class="hidden" style="height:100%; display:flex; flex-direction:column;">
             <h1 style="color:var(--neon-orange);">En Jeu</h1>
-            <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-                <p style="font-size:1rem; color:#888;">Les rôles ont été distribués.</p>
-                <p style="font-size:2.5rem; font-weight:bold; letter-spacing:2px; margin:20px 0;">DÉBATEZ !</p>
-                <p style="font-size:0.9rem; color:#666;">(Éliminez les intrus)</p>
+            
+            <div id="starter-info" class="status-header">
+                <span style="color:#888; font-size:0.9rem;">C'est à</span><br>
+                <strong id="starter-name" style="font-size:1.5rem; color:white;">JOUEUR</strong><br>
+                <span style="color:#888; font-size:0.9rem;">de commencer le débat !</span>
             </div>
-            <div id="uc-reveal-area" class="hidden" style="flex-grow:2; background:#111; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #333;">
-                <h3 style="margin-top:0; color:#888; font-size:0.9rem; text-transform:uppercase;">Révélation des rôles :</h3>
-                <div id="uc-roles-list" class="role-reveal-list"></div>
+
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;">Cliquez sur un joueur pour l'éliminer :</p>
+            
+            <div id="voting-list" style="flex-grow:1; overflow-y:auto;">
+                </div>
+
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid #333;">
+                <h4 style="margin:0 0 10px 0; color:#666;">Éliminés :</h4>
+                <div id="eliminated-container" style="max-height:100px; overflow-y:auto;"></div>
             </div>
-            <button id="btn-reveal-uc" class="btn btn-orange" onclick="revealUndercover()">👁️ Révéler les rôles</button>
-            <button id="btn-reset-uc" class="btn btn-neutral hidden" onclick="resetUndercover()">Nouvelle Partie</button>
+        </div>
+    </div>
+
+    <div id="modal-white-guess" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 style="color:white;">👻 MR. WHITE !</h2>
+            <p>Tu es éliminé, mais tu peux gagner si tu devines le mot des Civils.</p>
+            <input type="text" id="white-guess-input" placeholder="Entre le mot..." style="margin: 15px 0; border:1px solid #fff;">
+            <button class="btn btn-orange" onclick="checkWhiteGuess()">Valider</button>
+            <button class="btn btn-neutral" onclick="whiteFail()">Je ne sais pas</button>
+        </div>
+    </div>
+
+    <div id="modal-victory" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h1 style="font-size:3rem;">🏆</h1>
+            <h2 id="winner-role" style="color:white;">VICTOIRE</h2>
+            <p id="victory-details" style="color:#aaa;"></p>
+            <button class="btn btn-primary" onclick="resetUndercover()" style="margin-top:20px;">Rejouer</button>
         </div>
     </div>
 
@@ -102,7 +162,9 @@
         let ucPlayers = ["Joueur 1", "Joueur 2", "Joueur 3"];
         let ucGameData = [];
         let currentDistribIndex = 0;
+        let currentCivWord = ""; // Pour vérifier Mr White
 
+        // --- SETUP FUNCTIONS ---
         function renderUcSetup() {
             const container = document.getElementById('uc-players-container');
             container.innerHTML = "";
@@ -125,6 +187,7 @@
         function addUcPlayer() { ucPlayers.push(`Joueur ${ucPlayers.length + 1}`); renderUcSetup(); }
         function removeUcPlayer(index) { if (ucPlayers.length <= 3) return; ucPlayers.splice(index, 1); renderUcSetup(); }
 
+        // --- GAME START ---
         function startUndercoverGame() {
             const validPlayers = ucPlayers.filter(p => p.trim() !== "");
             const nbUnder = parseInt(document.getElementById('uc-count').value);
@@ -132,14 +195,23 @@
             if (validPlayers.length < 3) { alert("Min. 3 joueurs !"); return; }
             if (nbUnder + nbWhite >= validPlayers.length) { alert("Il faut au moins 1 Civil !"); return; }
 
+            // Choix des mots
             const pair = icamWords[Math.floor(Math.random() * icamWords.length)];
+            currentCivWord = pair.civ; // On garde le mot civil pour Mr White
+
             let roles = [];
             for(let i=0; i<nbUnder; i++) roles.push({ role: 'under', word: pair.und });
             for(let i=0; i<nbWhite; i++) roles.push({ role: 'white', word: "Tu es Mr. White (Pas de mot)" });
             while(roles.length < validPlayers.length) roles.push({ role: 'civil', word: pair.civ });
             roles.sort(() => Math.random() - 0.5);
             
-            ucGameData = validPlayers.map((name, i) => ({ name: name, role: roles[i].role, word: roles[i].word }));
+            ucGameData = validPlayers.map((name, i) => ({ 
+                name: name, 
+                role: roles[i].role, 
+                word: roles[i].word,
+                alive: true // Nouveau : statut en vie
+            }));
+
             currentDistribIndex = 0;
             document.getElementById('uc-setup').classList.add('hidden');
             document.getElementById('uc-distrib').classList.remove('hidden');
@@ -159,45 +231,137 @@
         function nextDistrib() {
             currentDistribIndex++;
             if (currentDistribIndex >= ucGameData.length) {
-                document.getElementById('uc-distrib').classList.add('hidden'); 
-                document.getElementById('uc-game').classList.remove('hidden');
-                document.getElementById('uc-reveal-area').classList.add('hidden'); 
-                document.getElementById('btn-reveal-uc').classList.remove('hidden');
-                document.getElementById('btn-reset-uc').classList.add('hidden');
+                // FIN DISTRIB -> LANCEMENT JEU
+                initGamePhase();
             } else { showDistribScreen(); }
         }
 
-        function revealUndercover() {
-            const list = document.getElementById('uc-roles-list'); list.innerHTML = "";
-            ucGameData.forEach(p => {
-                const div = document.createElement('div'); 
-                div.style.display = "flex";
-                div.style.justifyContent = "space-between";
-                div.style.padding = "5px 0";
-                let roleText = "Civil", roleColor = "#00e676";
-                if(p.role === 'under') { roleText = "Undercover"; roleColor = "#ff3d00"; }
-                if(p.role === 'white') { roleText = "Mr. White"; roleColor = "#aaa"; }
-                div.innerHTML = `<span>${p.name}</span> <span style="color:${roleColor}">${roleText}</span>`; 
-                list.appendChild(div);
-            });
-            document.getElementById('uc-reveal-area').classList.remove('hidden');
-            document.getElementById('btn-reveal-uc').classList.add('hidden');
-            document.getElementById('btn-reset-uc').classList.remove('hidden');
+        // --- GAMEPLAY PHASE ---
+        function initGamePhase() {
+            document.getElementById('uc-distrib').classList.add('hidden'); 
+            document.getElementById('uc-game').classList.remove('hidden');
+            document.getElementById('eliminated-container').innerHTML = "";
+            
+            // 1. Choisir qui commence
+            const starter = ucGameData[Math.floor(Math.random() * ucGameData.length)];
+            document.getElementById('starter-name').innerText = starter.name;
+
+            // 2. Afficher les boutons de vote
+            renderVotingList();
         }
 
-        function resetUndercover() { document.getElementById('uc-game').classList.add('hidden'); document.getElementById('uc-setup').classList.remove('hidden'); }
+        function renderVotingList() {
+            const list = document.getElementById('voting-list');
+            list.innerHTML = "";
 
+            ucGameData.forEach((p, index) => {
+                if(p.alive) {
+                    const btn = document.createElement('div');
+                    btn.className = 'player-vote-btn';
+                    btn.innerHTML = `<span>${p.name}</span> <span style="font-size:0.8rem; color:#666;">Voter ☠️</span>`;
+                    btn.onclick = () => eliminatePlayer(index);
+                    list.appendChild(btn);
+                }
+            });
+        }
+
+        function eliminatePlayer(index) {
+            const p = ucGameData[index];
+            if(!confirm(`Êtes-vous sûr d'éliminer ${p.name} ?`)) return;
+
+            p.alive = false;
+            
+            // Log élimination
+            const logDiv = document.getElementById('eliminated-container');
+            let roleName = "Civil";
+            let roleColor = "#00e676"; // Vert
+            if(p.role === 'under') { roleName = "Undercover"; roleColor = "#ff3d00"; } // Orange
+            if(p.role === 'white') { roleName = "Mr. White"; roleColor = "#fff"; } // Blanc
+
+            const entry = document.createElement('div');
+            entry.className = 'eliminated-log';
+            entry.innerHTML = `<span>${p.name}</span> <span style="color:${roleColor}">${roleName}</span>`;
+            logDiv.prepend(entry); // Ajoute au début
+
+            // Si c'est Mr White -> Chance de gagner
+            if(p.role === 'white') {
+                triggerWhiteGuess();
+                return; // On attend la réponse de White avant de vérifier la fin
+            }
+
+            renderVotingList();
+            checkWinCondition();
+        }
+
+        // --- LOGIQUE MR WHITE ---
+        function triggerWhiteGuess() {
+            document.getElementById('white-guess-input').value = "";
+            document.getElementById('modal-white-guess').classList.remove('hidden');
+        }
+
+        function checkWhiteGuess() {
+            const guess = document.getElementById('white-guess-input').value.trim().toLowerCase();
+            const target = currentCivWord.toLowerCase();
+            
+            // Comparaison souple (contient le mot ou distance Levenshtein simple... ici simple égalité/inclusion)
+            if(guess === target || (guess.length > 3 && target.includes(guess))) {
+                triggerVictory("Mr. White", "Il a trouvé le mot : " + currentCivWord);
+            } else {
+                whiteFail();
+            }
+        }
+
+        function whiteFail() {
+            document.getElementById('modal-white-guess').classList.add('hidden');
+            alert("Raté ! Le mot n'est pas trouvé.");
+            renderVotingList();
+            checkWinCondition();
+        }
+
+        // --- CONDITIONS DE VICTOIRE ---
+        function checkWinCondition() {
+            const livingBadGuys = ucGameData.filter(p => p.alive && (p.role === 'under' || p.role === 'white')).length;
+            const livingCivils = ucGameData.filter(p => p.alive && p.role === 'civil').length;
+            
+            // Cas 1 : Plus de méchants -> Civils gagnent
+            if(livingBadGuys === 0) {
+                triggerVictory("Les Civils", "Tous les imposteurs ont été éliminés !");
+                return;
+            }
+
+            // Cas 2 : Méchants majoritaires (ou égalité) -> Méchants gagnent
+            // (Standard undercover : si 1 civil vs 1 under, l'under gagne car il connait les autres under s'il en reste)
+            if(livingBadGuys >= livingCivils) {
+                triggerVictory("Les Imposteurs", "Ils sont en surnombre !");
+                return;
+            }
+        }
+
+        function triggerVictory(winnerName, details) {
+            document.getElementById('winner-role').innerText = winnerName + " gagnent !";
+            document.getElementById('victory-details').innerText = details;
+            document.getElementById('modal-victory').classList.remove('hidden');
+        }
+
+        function resetUndercover() { 
+            document.getElementById('modal-victory').classList.add('hidden');
+            document.getElementById('modal-white-guess').classList.add('hidden');
+            document.getElementById('uc-game').classList.add('hidden'); 
+            document.getElementById('uc-setup').classList.remove('hidden'); 
+        }
+
+        // --- HOLD BTN LOGIC ---
         const ucHoldBtn = document.getElementById('uc-hold-btn'); 
         const ucWord = document.getElementById('uc-word-display'); 
         const ucInst = document.getElementById('uc-instruction');
 
         const showUc = (e) => { 
-            e.preventDefault(); 
+            if(e.cancelable) e.preventDefault(); 
             ucWord.style.display='block'; 
             ucInst.style.display='none'; 
         };
         const hideUc = (e) => { 
-            e.preventDefault(); 
+            if(e.cancelable) e.preventDefault(); 
             ucWord.style.display='none'; 
             ucInst.style.display='block'; 
             document.getElementById('btn-next-distrib').classList.remove('hidden'); 
