@@ -6,7 +6,7 @@
     <title>Undercover</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Styles spécifiques ajoutés pour la V2 */
+        /* --- STYLES SPECIFIQUES V3 --- */
         .player-vote-btn {
             background: #1a1a1a;
             border: 1px solid #444;
@@ -20,18 +20,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: 0.2s;
         }
-        .player-vote-btn:hover { border-color: var(--neon-orange); background: #222; }
+        .player-vote-btn:hover { border-color: var(--neon-orange); background: #252525; }
         
-        .eliminated-log {
-            font-size: 0.9rem;
-            color: #888;
-            border-bottom: 1px solid #333;
-            padding: 8px 0;
-            display: flex;
-            justify-content: space-between;
-        }
-
         .status-header {
             text-align: center;
             margin-bottom: 20px;
@@ -39,7 +31,26 @@
             background: #1a1a1a;
             border-radius: 10px;
             border: 1px solid var(--neon-orange);
+            box-shadow: 0 0 15px rgba(255, 61, 0, 0.1);
         }
+
+        /* Liste de recap finale */
+        .recap-list {
+            text-align: left;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            border-top: 1px solid #444;
+            padding-top: 10px;
+        }
+        .recap-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.9rem;
+        }
+        .recap-word { color: #888; font-style: italic; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -85,15 +96,20 @@
                 <span style="color:#888; font-size:0.9rem;">de commencer le débat !</span>
             </div>
 
-            <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;">Cliquez sur un joueur pour l'éliminer :</p>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px; text-align:center;">Votez pour éliminer un joueur :</p>
             
             <div id="voting-list" style="flex-grow:1; overflow-y:auto;">
                 </div>
+        </div>
+    </div>
 
-            <div style="margin-top:10px; padding-top:10px; border-top:1px solid #333;">
-                <h4 style="margin:0 0 10px 0; color:#666;">Éliminés :</h4>
-                <div id="eliminated-container" style="max-height:100px; overflow-y:auto;"></div>
-            </div>
+    <div id="modal-elimination" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="color:#888; margin-top:0;">Le vote a parlé...</h3>
+            <h1 id="elim-name" style="color:white; margin:10px 0;">JOUEUR</h1>
+            <p>était...</p>
+            <h2 id="elim-role" style="font-size:2rem; margin:20px 0;">ROLE</h2>
+            <button class="btn btn-neutral" onclick="afterEliminationReveal()">Continuer</button>
         </div>
     </div>
 
@@ -108,10 +124,16 @@
     </div>
 
     <div id="modal-victory" class="modal-overlay hidden">
-        <div class="modal-content">
-            <h1 style="font-size:3rem;">🏆</h1>
-            <h2 id="winner-role" style="color:white;">VICTOIRE</h2>
-            <p id="victory-details" style="color:#aaa;"></p>
+        <div class="modal-content" style="max-height:80vh; overflow-y:auto;">
+            <h1 style="font-size:2.5rem; margin-bottom:5px;">🏆</h1>
+            <h2 id="winner-role" style="color:white; margin:0;">VICTOIRE</h2>
+            <p id="victory-details" style="color:#aaa; margin-top:5px;"></p>
+            
+            <div style="margin-top:20px; text-align:left;">
+                <h4 style="color:#666; text-transform:uppercase; border-bottom:1px solid #333; padding-bottom:5px;">Récapitulatif</h4>
+                <div id="final-recap-list" class="recap-list"></div>
+            </div>
+
             <button class="btn btn-primary" onclick="resetUndercover()" style="margin-top:20px;">Rejouer</button>
         </div>
     </div>
@@ -162,9 +184,10 @@
         let ucPlayers = ["Joueur 1", "Joueur 2", "Joueur 3"];
         let ucGameData = [];
         let currentDistribIndex = 0;
-        let currentCivWord = ""; // Pour vérifier Mr White
+        let currentCivWord = "";
+        let pendingEliminatedPlayer = null; // Stocke le joueur éliminé temporairement
 
-        // --- SETUP FUNCTIONS ---
+        // --- SETUP ---
         function renderUcSetup() {
             const container = document.getElementById('uc-players-container');
             container.innerHTML = "";
@@ -187,7 +210,7 @@
         function addUcPlayer() { ucPlayers.push(`Joueur ${ucPlayers.length + 1}`); renderUcSetup(); }
         function removeUcPlayer(index) { if (ucPlayers.length <= 3) return; ucPlayers.splice(index, 1); renderUcSetup(); }
 
-        // --- GAME START ---
+        // --- START GAME ---
         function startUndercoverGame() {
             const validPlayers = ucPlayers.filter(p => p.trim() !== "");
             const nbUnder = parseInt(document.getElementById('uc-count').value);
@@ -195,9 +218,8 @@
             if (validPlayers.length < 3) { alert("Min. 3 joueurs !"); return; }
             if (nbUnder + nbWhite >= validPlayers.length) { alert("Il faut au moins 1 Civil !"); return; }
 
-            // Choix des mots
             const pair = icamWords[Math.floor(Math.random() * icamWords.length)];
-            currentCivWord = pair.civ; // On garde le mot civil pour Mr White
+            currentCivWord = pair.civ;
 
             let roles = [];
             for(let i=0; i<nbUnder; i++) roles.push({ role: 'under', word: pair.und });
@@ -206,10 +228,7 @@
             roles.sort(() => Math.random() - 0.5);
             
             ucGameData = validPlayers.map((name, i) => ({ 
-                name: name, 
-                role: roles[i].role, 
-                word: roles[i].word,
-                alive: true // Nouveau : statut en vie
+                name: name, role: roles[i].role, word: roles[i].word, alive: true 
             }));
 
             currentDistribIndex = 0;
@@ -231,142 +250,148 @@
         function nextDistrib() {
             currentDistribIndex++;
             if (currentDistribIndex >= ucGameData.length) {
-                // FIN DISTRIB -> LANCEMENT JEU
                 initGamePhase();
             } else { showDistribScreen(); }
         }
 
-        // --- GAMEPLAY PHASE ---
         function initGamePhase() {
             document.getElementById('uc-distrib').classList.add('hidden'); 
             document.getElementById('uc-game').classList.remove('hidden');
-            document.getElementById('eliminated-container').innerHTML = "";
             
-            // 1. Choisir qui commence
+            // Random starter
             const starter = ucGameData[Math.floor(Math.random() * ucGameData.length)];
             document.getElementById('starter-name').innerText = starter.name;
-
-            // 2. Afficher les boutons de vote
             renderVotingList();
         }
 
         function renderVotingList() {
             const list = document.getElementById('voting-list');
             list.innerHTML = "";
-
             ucGameData.forEach((p, index) => {
                 if(p.alive) {
                     const btn = document.createElement('div');
                     btn.className = 'player-vote-btn';
-                    btn.innerHTML = `<span>${p.name}</span> <span style="font-size:0.8rem; color:#666;">Voter ☠️</span>`;
-                    btn.onclick = () => eliminatePlayer(index);
+                    btn.innerHTML = `<span>${p.name}</span> <span style="font-size:0.8rem; color:#666;">Éliminer ☠️</span>`;
+                    btn.onclick = () => confirmElimination(index);
                     list.appendChild(btn);
                 }
             });
         }
 
-        function eliminatePlayer(index) {
+        // --- ELIMINATION FLOW ---
+        function confirmElimination(index) {
             const p = ucGameData[index];
             if(!confirm(`Êtes-vous sûr d'éliminer ${p.name} ?`)) return;
 
             p.alive = false;
+            pendingEliminatedPlayer = p; // On stocke pour gérer l'après-révélation
+
+            // Préparation Modal Révélation
+            document.getElementById('elim-name').innerText = p.name;
+            const roleEl = document.getElementById('elim-role');
             
-            // Log élimination
-            const logDiv = document.getElementById('eliminated-container');
-            let roleName = "Civil";
-            let roleColor = "#00e676"; // Vert
-            if(p.role === 'under') { roleName = "Undercover"; roleColor = "#ff3d00"; } // Orange
-            if(p.role === 'white') { roleName = "Mr. White"; roleColor = "#fff"; } // Blanc
-
-            const entry = document.createElement('div');
-            entry.className = 'eliminated-log';
-            entry.innerHTML = `<span>${p.name}</span> <span style="color:${roleColor}">${roleName}</span>`;
-            logDiv.prepend(entry); // Ajoute au début
-
-            // Si c'est Mr White -> Chance de gagner
-            if(p.role === 'white') {
-                triggerWhiteGuess();
-                return; // On attend la réponse de White avant de vérifier la fin
+            if(p.role === 'civil') {
+                roleEl.innerText = "CIVIL"; roleEl.style.color = "var(--neon-green)";
+            } else if (p.role === 'under') {
+                roleEl.innerText = "UNDERCOVER"; roleEl.style.color = "var(--neon-orange)";
+            } else {
+                roleEl.innerText = "MR. WHITE"; roleEl.style.color = "#fff";
             }
 
-            renderVotingList();
-            checkWinCondition();
+            document.getElementById('modal-elimination').classList.remove('hidden');
         }
 
-        // --- LOGIQUE MR WHITE ---
+        function afterEliminationReveal() {
+            document.getElementById('modal-elimination').classList.add('hidden');
+            
+            // Si c'est Mr White, il a une chance
+            if(pendingEliminatedPlayer.role === 'white') {
+                triggerWhiteGuess();
+            } else {
+                // Sinon on vérifie si la partie est finie
+                checkWinCondition();
+                renderVotingList();
+            }
+        }
+
+        // --- MR WHITE LOGIC ---
         function triggerWhiteGuess() {
             document.getElementById('white-guess-input').value = "";
             document.getElementById('modal-white-guess').classList.remove('hidden');
         }
-
         function checkWhiteGuess() {
             const guess = document.getElementById('white-guess-input').value.trim().toLowerCase();
             const target = currentCivWord.toLowerCase();
-            
-            // Comparaison souple (contient le mot ou distance Levenshtein simple... ici simple égalité/inclusion)
+            // Check laxiste (contient le mot)
             if(guess === target || (guess.length > 3 && target.includes(guess))) {
-                triggerVictory("Mr. White", "Il a trouvé le mot : " + currentCivWord);
+                triggerVictory("Mr. White", "Il a volé la victoire en trouvant le mot : " + currentCivWord);
             } else {
                 whiteFail();
             }
         }
-
         function whiteFail() {
             document.getElementById('modal-white-guess').classList.add('hidden');
-            alert("Raté ! Le mot n'est pas trouvé.");
-            renderVotingList();
+            alert("Raté ! Mr. White est éliminé.");
             checkWinCondition();
+            renderVotingList();
         }
 
-        // --- CONDITIONS DE VICTOIRE ---
+        // --- VICTOIRE & RECAP ---
         function checkWinCondition() {
             const livingBadGuys = ucGameData.filter(p => p.alive && (p.role === 'under' || p.role === 'white')).length;
             const livingCivils = ucGameData.filter(p => p.alive && p.role === 'civil').length;
             
-            // Cas 1 : Plus de méchants -> Civils gagnent
             if(livingBadGuys === 0) {
-                triggerVictory("Les Civils", "Tous les imposteurs ont été éliminés !");
-                return;
-            }
-
-            // Cas 2 : Méchants majoritaires (ou égalité) -> Méchants gagnent
-            // (Standard undercover : si 1 civil vs 1 under, l'under gagne car il connait les autres under s'il en reste)
-            if(livingBadGuys >= livingCivils) {
+                triggerVictory("Les Civils", "Tous les imposteurs sont éliminés !");
+            } else if(livingBadGuys >= livingCivils) {
                 triggerVictory("Les Imposteurs", "Ils sont en surnombre !");
-                return;
             }
         }
 
         function triggerVictory(winnerName, details) {
             document.getElementById('winner-role').innerText = winnerName + " gagnent !";
             document.getElementById('victory-details').innerText = details;
+            document.getElementById('modal-white-guess').classList.add('hidden'); // Close white modal if open
+
+            // Build Recap List
+            const list = document.getElementById('final-recap-list');
+            list.innerHTML = "";
+            ucGameData.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'recap-item';
+                
+                let roleColor = "#00e676"; // Civ
+                let displayRole = "Civil";
+                if(p.role === 'under') { roleColor = "#ff3d00"; displayRole = "Undercover"; }
+                if(p.role === 'white') { roleColor = "#fff"; displayRole = "Mr. White"; }
+
+                item.innerHTML = `
+                    <div style="display:flex; flex-direction:column;">
+                        <span style="font-weight:bold; ${!p.alive ? 'text-decoration:line-through; color:#666;' : ''}">${p.name}</span>
+                        <span class="recap-word">${p.role === 'white' ? 'Aucun mot' : p.word}</span>
+                    </div>
+                    <span style="color:${roleColor}; font-weight:bold;">${displayRole}</span>
+                `;
+                list.appendChild(item);
+            });
+
             document.getElementById('modal-victory').classList.remove('hidden');
         }
 
         function resetUndercover() { 
             document.getElementById('modal-victory').classList.add('hidden');
             document.getElementById('modal-white-guess').classList.add('hidden');
+            document.getElementById('modal-elimination').classList.add('hidden');
             document.getElementById('uc-game').classList.add('hidden'); 
             document.getElementById('uc-setup').classList.remove('hidden'); 
         }
 
-        // --- HOLD BTN LOGIC ---
+        // --- HOLD EVENTS ---
         const ucHoldBtn = document.getElementById('uc-hold-btn'); 
         const ucWord = document.getElementById('uc-word-display'); 
         const ucInst = document.getElementById('uc-instruction');
-
-        const showUc = (e) => { 
-            if(e.cancelable) e.preventDefault(); 
-            ucWord.style.display='block'; 
-            ucInst.style.display='none'; 
-        };
-        const hideUc = (e) => { 
-            if(e.cancelable) e.preventDefault(); 
-            ucWord.style.display='none'; 
-            ucInst.style.display='block'; 
-            document.getElementById('btn-next-distrib').classList.remove('hidden'); 
-        };
-
+        const showUc = (e) => { if(e.cancelable) e.preventDefault(); ucWord.style.display='block'; ucInst.style.display='none'; };
+        const hideUc = (e) => { if(e.cancelable) e.preventDefault(); ucWord.style.display='none'; ucInst.style.display='block'; document.getElementById('btn-next-distrib').classList.remove('hidden'); };
         ucHoldBtn.addEventListener('touchstart', showUc, {passive: false});
         ucHoldBtn.addEventListener('touchend', hideUc, {passive: false});
         ucHoldBtn.addEventListener('mousedown', showUc);
