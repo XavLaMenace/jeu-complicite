@@ -64,8 +64,94 @@
     </div>
 
     <script>
-        const baseWords = ["Brosse à dents", "Micro-ondes", "Harry Potter", "Batman", "Zidane", "Pizza", "Raclette", "Sushi", "Pigeon", "Moustique", "Licorne", "Vomir", "Danser", "Pleurer", "Iphone", "Lave-vaisselle", "Tondeuse", "Frigo", "Parapluie", "Sac à dos", "Valise", "Dentifrice", "Savon", "Miroir", "Montre", "Bague", "Basket", "Cravate", "Chapeau", "Écharpe", "Pull", "Aspirateur", "Poêle", "Casserole", "Couteau", "Bouteille", "Ordinateur", "Tablette", "Console", "Manette", "Livre", "Cinéma", "Zoo", "Restaurant", "Avion", "Train", "Voiture", "Fusée", "Skateboard", "Surf", "Soleil", "Pluie", "Orage", "Robot", "Internet", "Selfie"];
-        
+        const baseWords = [
+  "Brosse à dents", "Micro-ondes", "Harry Potter", "Batman", "Zidane", "Pizza",
+  "Raclette", "Sushi", "Pigeon", "Moustique", "Licorne", "Vomir", "Danser",
+  "Pleurer", "Iphone", "Lave-vaisselle", "Tondeuse", "Frigo", "Parapluie",
+  "Sac à dos", "Valise", "Dentifrice", "Savon", "Miroir", "Montre", "Bague",
+  "Basket", "Cravate", "Chapeau", "Écharpe", "Pull", "Aspirateur", "Poêle",
+  "Casserole", "Couteau", "Bouteille", "Ordinateur", "Tablette", "Console",
+  "Manette", "Livre", "Cinéma", "Zoo", "Restaurant", "Avion", "Train",
+  "Voiture", "Fusée", "Skateboard", "Surf", "Soleil", "Pluie", "Orage",
+  "Robot", "Internet", "Selfie",
+
+  "Stylo", "Crayon", "Feutre", "Gomme", "Cahier", "Classeur", "Cartable",
+  "Bureau", "Chaise", "Canapé", "Lit", "Oreiller", "Couette", "Rideau",
+  "Lampe", "Ampoule", "Prise", "Interrupteur", "Télévision", "Télécommande",
+  "Radio", "Casque", "Écouteurs", "Micro", "Clavier", "Souris", "Écran",
+  "Imprimante", "Scanner", "Câble", "Chargeur", "Batterie", "Horloge",
+  "Calendrier", "Agenda", "Réveil", "Montagne", "Forêt", "Rivière", "Océan",
+  "Plage", "Désert", "Neige", "Glace", "Vent", "Nuage", "Arc-en-ciel",
+  "Étoile", "Lune", "Planète", "Astronaute", "Satellite", "Télescope",
+  "Boussole", "Carte", "GPS", "Porte", "Fenêtre", "Mur", "Plafond", "Sol",
+  "Escalier", "Ascenseur", "Clé", "Serrure", "Cadenas", "Sac",
+  "Portefeuille", "Billet", "Pièce", "Banque", "Carte bleue", "Ticket",
+  "Facture", "Stylet", "Table", "Tabouret", "Armoire", "Placard", "Étagère",
+  "Tiroir", "Boîte", "Carton", "Papier", "Enveloppe", "Timbre", "Colis",
+  "Livreur", "Facteur", "Camion", "Bus", "Tramway", "Métro", "Taxi", "Vélo",
+  "Trottinette", "Gilet", "Feu rouge", "Panneau", "Route", "Autoroute",
+  "Carrefour", "Rond-point", "Tunnel", "Pont", "Parking",
+
+  "Clé USB", "Disque dur", "Cloud", "Mot de passe", "Code", "Bug", "Virus",
+  "Firewall", "Réseau", "Wifi", "Bluetooth", "Application", "Logiciel",
+  "Algorithme", "Donnée", "Serveur", "Base de données",
+
+  "Chien", "Chat", "Lapin", "Hamster", "Poisson", "Requin", "Dauphin",
+  "Baleine", "Lion", "Tigre", "Éléphant", "Girafe", "Zèbre", "Singe",
+  "Serpent", "Araignée", "Fourmi", "Abeille", "Papillon", "Escargot",
+  "Coq", "Poulet", "Vache", "Mouton", "Chèvre", "Cheval",
+
+  "Fromage", "Pain", "Beurre", "Confiture", "Miel", "Sucre", "Sel", "Poivre",
+  "Épices", "Pâtes", "Riz", "Burger", "Frites", "Sandwich", "Kebab",
+  "Lasagnes", "Soupe", "Salade", "Gâteau", "Cookie", "Chocolat", "Bonbon",
+  "Glace", "Yaourt", "Céréales",
+
+  "Café", "Thé", "Lait", "Jus", "Soda", "Eau", "Sirop", "Bière", "Vin",
+  "Cocktail", "Verre", "Tasse", "Mug", "Bol", "Assiette", "Fourchette",
+  "Cuillère", "Serviette", "Nappe",
+
+  "Médecin", "Infirmier", "Hôpital", "Pharmacie", "Médicament", "Vaccin",
+  "Thermomètre", "Pansement", "Plâtre", "IRM",
+
+  "École", "Collège", "Lycée", "Université", "Professeur", "Étudiant",
+  "Examen", "Note", "Diplôme", "Stage", "Entreprise", "Réunion", "Planning",
+  "Deadline", "Projet", "Objectif", "Méthode",
+
+  "Sport", "Football", "Rugby", "Basketball", "Tennis", "Padel",
+  "Natation", "Course", "Musculation", "Yoga", "Boxe", "Escalade",
+
+  "Cinéma", "Théâtre", "Concert", "Musée", "Exposition", "Festival",
+  "Peinture", "Dessin", "Photo", "Caméra", "Montage",
+
+  "Amour", "Amitié", "Colère", "Joie", "Tristesse", "Stress", "Rire",
+  "Sourire", "Cri", "Silence", "Secret", "Rêve", "Chance", "Hasard",
+  "Succès", "Échec", "Victoire", "Défaite"
+  "Flou", "Bancal", "Dérapage", "Echo", "Plis", "Grain", "Virage",
+  "Déclic", "Saut", "Fuite", "Angle mort", "Reflet", "Brèche",
+  "Dérive", "Noeud", "Pulse", "Trace", "Rebond", "Pic",
+  "Creux", "Choc", "Coulisse", "Arrêt", "Reprise", "Fil",
+  "Brouillon", "Indice", "Masque", "Sillage", "Pause",
+  "Coupure", "Relais", "Faille", "Marge", "Biais",
+  "Écart", "Série", "Fragment", "Blocage", "Glissement",
+  "Pointillé", "Lapsus", "Contour", "Rayure", "Vague",
+  "Pression", "Détour", "Résidu", "Griffe", "Secousse",
+  "Bascule", "Intervalle", "Niveau zéro", "Impact",
+  "Périphérie", "Centre flou", "Décrochement",
+  "Accroche", "Tension", "Densité", "Silence blanc",
+  "Fond sonore", "Variation lente", "Instant figé",
+  "Micro-moment", "Décalque", "Empreinte",
+  "Rotation", "Phase creuse", "Effet domino",
+  "Zone grise", "Limbe", "Suspension",
+  "Déclencheur", "Oscillation",
+  "Fracture douce", "Rupture nette",
+  "Équilibre instable", "Désaxé",
+  "Surcharge", "Vide plein",
+  "Bordure", "Inflexion",
+  "Signal faible", "Bruissement"
+]
+
+];
+
         let words = [...baseWords];
         let teams = [{ name: "Équipe A", score: 0 }, { name: "Équipe B", score: 0 }];
         let winningScore = 0;
